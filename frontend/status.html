@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moblin Remote Control Relay Status</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="vanilla-framework-version-4.14.0.min.css" />
+  </head>
+
+  <body class="is-dark" style="background: #1a1a1a">
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8" style="margin: auto">
+        <h1>Moblin Remote Control Relay Status</h1>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+        <div class="p-card">
+          <h2>Streamers</h2>
+          <div>
+            <table id="connections" style="table-layout: auto">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Status changed</th>
+                  <th>Bitrate to streamer</th>
+                  <th>Bitrate to assistant</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="help"></div>
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <div class="row" style="padding-bottom: 20px">
+      <div class="col-12" style="margin: auto">
+        <a href="server-status.html" target="_blank" style="padding: 10px"
+          >Server status</a
+        >
+        <a
+          href="https://github.com/eerimoq/moblin-remote-control-relay"
+          target="_blank"
+          style="padding: 10px"
+          >Github</a
+        >
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="status.js"></script>
+  </body>
+</html>
