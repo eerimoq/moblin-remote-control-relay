@@ -53,7 +53,7 @@ sudo systemctl start moblin-remote-control-relay
 
 ```
 location /moblin-remote-control-relay/ {
-    proxy_pass http://localhost:9999/;
+    proxy_pass http://localhost:9998/;
     proxy_http_version  1.1;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Upgrade $http_upgrade;
