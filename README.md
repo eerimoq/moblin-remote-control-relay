@@ -1,6 +1,6 @@
 # Moblin Remote Control Relay
 
-Example server: https://mys-lang.org/moblin-remote-control-relay
+Example server: https://moblin.mys-lang.org/moblin-remote-control-relay/
 
 <img src="screenshot.png">
 
