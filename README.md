@@ -69,3 +69,11 @@ Restart it.
 ```
 sudo systemctl restart nginx
 ```
+
+# Icon
+
+https://favicon.io/favicon-generator/
+
+Font: Noto Sans Sharada
+Font size: 110
+Background color: #0A5
