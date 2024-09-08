@@ -219,20 +219,56 @@ function reset(delayMs) {
   }, delayMs);
 }
 
+function makeStreamerUrl() {
+  return `${wsScheme}://${baseUrl}/streamer/${bridgeId}`;
+}
+
+function makeAssistantServerPort() {
+  return `${assistantPort}`;
+}
+
 function copyStreamerUrlToClipboard() {
-  navigator.clipboard.writeText(
-    `${wsScheme}://${baseUrl}/streamer/${bridgeId}`
-  );
+  navigator.clipboard.writeText(makeStreamerUrl());
 }
 
 function copyAssistantPortToClipboard() {
-  navigator.clipboard.writeText(`${assistantPort}`);
+  navigator.clipboard.writeText(makeAssistantServerPort());
+}
+
+function makeStatusPageUrl() {
+  return `${httpScheme}://${baseUrl}/status.html?bridgeId=${bridgeId}`;
 }
 
 function copyStatusPageUrlToClipboard() {
-  navigator.clipboard.writeText(
-    `${httpScheme}://${baseUrl}/status.html?bridgeId=${bridgeId}`
-  );
+  navigator.clipboard.writeText(makeStatusPageUrl());
+}
+
+function toggleShow(inputId, iconId) {
+  let input = document.getElementById(inputId);
+  let icon = document.getElementById(iconId);
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.add("p-icon--hide");
+    icon.classList.remove("p-icon--show");
+  } else {
+    input.type = "password";
+    icon.classList.add("p-icon--show");
+    icon.classList.remove("p-icon--hide");
+  }
+}
+
+function toggleShowMoblinStreamerAssistantUrl() {
+  toggleShow("streamerAssistantUrl", "streamerAssistantUrlIcon");
+}
+
+function toggleShowStatusPageUrl() {
+  toggleShow("statusPageUrl", "statusPageUrlIcon");
+}
+
+function populateRemoteControllerSetup() {
+  document.getElementById("streamerAssistantUrl").value = makeStreamerUrl();
+  document.getElementById("assistantServerPort").value =
+    makeAssistantServerPort();
 }
 
 function populateSettings() {
@@ -240,11 +276,17 @@ function populateSettings() {
   document.getElementById("bridgeId").value = bridgeId;
 }
 
+function populateStatusPage() {
+  document.getElementById("statusPageUrl").value = makeStatusPageUrl();
+}
+
 function saveSettings() {
   assistantPort = document.getElementById("assistantPort").value;
   localStorage.setItem("assistantPort", assistantPort);
   bridgeId = document.getElementById("bridgeId").value;
   localStorage.setItem("bridgeId", bridgeId);
+  populateRemoteControllerSetup();
+  populateStatusPage();
   reset(0);
 }
 
@@ -253,7 +295,9 @@ function resetSettings() {
   localStorage.setItem("bridgeId", bridgeId);
   assistantPort = defaultAssistantPort;
   localStorage.setItem("assistantPort", assistantPort);
+  populateRemoteControllerSetup();
   populateSettings();
+  populateStatusPage();
   reset(0);
 }
 
@@ -351,7 +395,9 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   loadAssistantPort(urlParams);
   relay = new Relay();
   relay.setupControlWebsocket();
+  populateRemoteControllerSetup();
   populateSettings();
+  populateStatusPage();
   updateConnections();
   updateRelayStatus();
   setInterval(() => {
