@@ -1,6 +1,6 @@
 # Moblin Remote Control Relay
 
-Example server: https://moblin.mys-lang.org/moblin-remote-control-relay/
+Server you can use (hosted in Tokyo): https://moblin.mys-lang.org/moblin-remote-control-relay/
 
 <img src="screenshot.png">
 
