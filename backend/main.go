@@ -45,6 +45,7 @@ type Connection struct {
 }
 
 func (c *Connection) close() {
+	log.Printf("closing connection")
 	c.mutex.Lock()
 	if c.remoteControllerWebsocket != nil {
 		remoteControllersConnected.Dec()
@@ -181,6 +182,7 @@ func serveBridgeData(w http.ResponseWriter, r *http.Request) {
 	bridgeRemoteControllersConnected.Inc()
 	for {
 		messageType, message, err := bridgeWebsocket.Read(context)
+		log.Printf("got message from bridge %v", message)
 		if err != nil {
 			break
 		}
@@ -192,6 +194,7 @@ func serveBridgeData(w http.ResponseWriter, r *http.Request) {
 		}
 		connection.mutex.Lock()
 		if connection.remoteControllerWebsocket != nil {
+			log.Printf("sending message to streamer %v", message)
 			connection.remoteControllerWebsocket.Write(context, messageType, message)
 		}
 		connection.mutex.Unlock()
@@ -226,6 +229,7 @@ func serveRemoteController(w http.ResponseWriter, r *http.Request) {
 	bridge.mutex.Lock()
 	bridge.connections[connectionId] = connection
 	bridgeControlWebsocket := bridge.controlWebsocket
+	log.Printf("sending connect message to assistant")
 	wsjson.Write(context, bridgeControlWebsocket, ControlMessage{
 		Type: controlMessageTypeConnect,
 		Data: ControlConnectData{
@@ -235,6 +239,7 @@ func serveRemoteController(w http.ResponseWriter, r *http.Request) {
 	bridge.mutex.Unlock()
 	for {
 		messageType, message, err := remoteControllerWebsocket.Read(context)
+		log.Printf("got message from streamer %v", message)
 		if err != nil {
 			break
 		}
@@ -249,6 +254,7 @@ func serveRemoteController(w http.ResponseWriter, r *http.Request) {
 			connection.mutex.Unlock()
 			break
 		}
+		log.Printf("sending message to bridge %v", message)
 		connection.bridgeWebsocket.Write(context, messageType, message)
 		connection.mutex.Unlock()
 	}
