@@ -117,7 +117,7 @@ func serveBridgeControl(w http.ResponseWriter, r *http.Request) {
 		statusWebsockets: make(map[*websocket.Conn]bool),
 	}
 	bridgeToClose, loaded := bridges.LoadAndStore(bridgeId, bridge)
-	if loaded {
+	if loaded && bridgeToClose != nil {
 		bridgeToClose.close(true)
 	}
 	for {
