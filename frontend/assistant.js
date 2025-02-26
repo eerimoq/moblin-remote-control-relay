@@ -2,9 +2,6 @@ const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";
 
-const assistantStatusConnecting = "Connecting...";
-const assistatnStatusConnected = "Connected";
-
 const connectionStatusConnectingToRelay = "Connecting to Relay...";
 const connectionStatusConnectingToAssistant =
   "Connecting to assistant on this computer...";
@@ -24,18 +21,15 @@ class Connection {
   constructor(connectionId) {
     this.connectionId = connectionId;
     this.relayDataWebsocket = undefined;
-    this.assistantWebsocket = undefined;
     this.status = connectionStatusConnectingToRelay;
-    this.statusUpdateTime = new Date();
-    this.bridgeToStreamersBytes = 0;
-    this.bridgeToAssistantBytes = 0;
-    this.bitrateToStreamer = 0;
-    this.bitrateToAssistant = 0;
-    this.prevBitrateToStreamersBytes = 0;
-    this.prevBitrateToAssistantBytes = 0;
+    this.statusTimerId = undefined;
   }
 
   close() {
+    if (this.statusTimerId != undefined) {
+     clearTimeout(this.statusTimerId);
+     this.statusTimerId = undefined;
+    }
     if (this.relayDataWebsocket != undefined) {
       this.relayDataWebsocket.close();
     }
@@ -52,8 +46,6 @@ class Connection {
       return;
     }
     this.status = newStatus;
-    this.statusUpdateTime = new Date();
-    updateConnections();
   }
 
   isAborted() {
@@ -72,7 +64,13 @@ class Connection {
     );
     this.status = connectionStatusConnectingToRelay;
     this.relayDataWebsocket.onopen = (event) => {
-      this.setupAssistantWebsocket();
+      this.send({hello: {
+        apiVersion: "1.0",
+        authentication: {
+          challenge: "1",
+          salt: "2"
+        }
+      }})
     };
     this.relayDataWebsocket.onerror = (event) => {
       this.setStatus(connectionStatusStreamerError);
@@ -83,20 +81,58 @@ class Connection {
       this.close();
     };
     this.relayDataWebsocket.onmessage = async (event) => {
-      if (this.assistantWebsocket.readyState == WebSocket.OPEN) {
-        this.bridgeToAssistantBytes += textEncoder.encode(event.data).length;
-        this.assistantWebsocket.send(event.data);
+      let message = JSON.parse(event.data);
+      // console.log("Got", message);
+      if (message.ping) {
+        this.handlePing();
+      } else if (message.identify) {
+        this.handleIdentify();
+      } else if (message.response) {
+        this.handleResponse(message.response.id, message.response.data);
       }
     };
   }
 
-  updateBitrates() {
-    this.bitrateToStreamer =
-      8 * (this.bridgeToStreamersBytes - this.prevBitrateToStreamersBytes);
-    this.prevBitrateToStreamersBytes = this.bridgeToStreamersBytes;
-    this.bitrateToAssistant =
-      8 * (this.bridgeToAssistantBytes - this.prevBitrateToAssistantBytes);
-    this.prevBitrateToAssistantBytes = this.bridgeToAssistantBytes;
+  handlePing() {
+    this.send({"pong": {}});
+  }
+
+  handleIdentify() {
+    this.send({
+      identified: {
+        ok: {}
+      }
+    });
+    this.sendGetStatusRequest();
+  }
+
+  handleResponse(id, data) {
+    if (data.getStatus) {
+      this.handleGetStatusResponse(data.getStatus);
+      this.statusTimerId = setTimeout(() => {
+        this.sendGetStatusRequest();
+      }, 5000);
+    }
+  }
+
+  handleGetStatusResponse(status) {
+    updateStatus(status);
+  }
+
+  sendGetStatusRequest() {
+    this.send({
+      request: {
+        id: 1,
+        data: {
+          getStatus: {}
+        }
+      }
+    });
+  }
+
+  send(message) {
+    // console.log("Sending", message);
+    this.relayDataWebsocket.send(JSON.stringify(message));
   }
 }
 
@@ -104,7 +140,6 @@ class Relay {
   constructor() {
     this.controlWebsocket = undefined;
     this.status = relayStatusConnecting;
-    this.statusEnabled = false;
   }
 
   close() {
@@ -120,15 +155,6 @@ class Relay {
     }
     this.status = newStatus;
     updateRelayStatus();
-  }
-
-  sendStatus(status) {
-    if (
-      this.controlWebsocket != undefined &&
-      this.controlWebsocket.readyState == WebSocket.OPEN
-    ) {
-      this.controlWebsocket.send(JSON.stringify(status));
-    }
   }
 
   setupControlWebsocket() {
@@ -159,10 +185,6 @@ class Relay {
         while (connections.length > 5) {
           connections.pop().close();
         }
-      } else if (message.type == "startStatus") {
-        this.statusEnabled = true;
-      } else if (message.type == "stopStatus") {
-        this.statusEnabled = false;
       } else if (message.type == "kicked") {
         this.setStatus(relayStatusKicked);
       } else if (message.type == "rateLimitExceeded") {
@@ -207,14 +229,6 @@ function copyStreamerUrlToClipboard() {
   navigator.clipboard.writeText(makeStreamerUrl());
 }
 
-function makeStatusPageUrl() {
-  return `${httpScheme}://${baseUrl}/status.html?bridgeId=${bridgeId}`;
-}
-
-function copyStatusPageUrlToClipboard() {
-  navigator.clipboard.writeText(makeStatusPageUrl());
-}
-
 function toggleShow(inputId, iconId) {
   let input = document.getElementById(inputId);
   let icon = document.getElementById(iconId);
@@ -246,9 +260,6 @@ function populateSettings() {
   document.getElementById("bridgeId").value = bridgeId;
 }
 
-function populateStatusPage() {
-}
-
 function makeLocalStorageBridgeIdKey() {
   return `bridgeId.${streamerName}`;
 }
@@ -259,7 +270,6 @@ function saveSettings() {
   localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   updateUrl();
   populateRemoteControllerSetup();
-  populateStatusPage();
   reset(0);
 }
 
@@ -268,30 +278,7 @@ function resetSettings() {
   localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   populateRemoteControllerSetup();
   populateSettings();
-  populateStatusPage();
   reset(0);
-}
-
-function updateConnections() {
-}
-
-function updateStatus() {
-  if (!relay.statusEnabled) {
-    return;
-  }
-  let status = {
-    connections: [],
-  };
-  for (const connection of connections) {
-    status.connections.push({
-      status: connection.status,
-      aborted: connection.isAborted(),
-      statusUpdateTime: connection.statusUpdateTime,
-      bitrateToStreamer: connection.bitrateToStreamer,
-      bitrateToAssistant: connection.bitrateToAssistant,
-    });
-  }
-  relay.sendStatus(status);
 }
 
 function updateRelayStatus() {
@@ -346,6 +333,28 @@ function updateUrl() {
   history.replaceState(history.state, "", makeAssistantUrl());
 }
 
+function updateStatus(status) {
+  let generalBody = getTableBodyNoHead("statusGeneral");
+  let row = generalBody.insertRow(-1);
+  appendToRow(row, "Battery level");
+  appendToRow(row, status.general.batteryLevel);
+  row = generalBody.insertRow(-1);
+  appendToRow(row, "Muted");
+  appendToRow(row, status.general.isMuted);
+  let topLeftBody = getTableBodyNoHead("statusTopLeft");
+  for (const name of Object.keys(status.topLeft).sort()) {
+    row = topLeftBody.insertRow(-1);
+    appendToRow(row, name);
+    appendToRow(row, status.topLeft[name].message);
+  }
+  let topRightBody = getTableBodyNoHead("statusTopRight");
+  for (const name of Object.keys(status.topRight).sort()) {
+    row = topRightBody.insertRow(-1);
+    appendToRow(row, name);
+    appendToRow(row, status.topRight[name].message);
+  }
+}
+
 window.addEventListener("DOMContentLoaded", async (event) => {
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
@@ -355,14 +364,5 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   relay.setupControlWebsocket();
   populateRemoteControllerSetup();
   populateSettings();
-  populateStatusPage();
-  updateConnections();
   updateRelayStatus();
-  setInterval(() => {
-    for (const connection of connections) {
-      connection.updateBitrates();
-    }
-    updateConnections();
-    updateStatus();
-  }, 1000);
 });

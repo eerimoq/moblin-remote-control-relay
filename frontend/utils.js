@@ -57,6 +57,14 @@ function getTableBody(id) {
     return table.tBodies[0];
 }
 
+function getTableBodyNoHead(id) {
+    let table = document.getElementById(id);
+    while (table.rows.length > 0) {
+        table.deleteRow(-1);
+    }
+    return table.tBodies[0];
+}
+
 function appendToRow(row, value) {
     let cell = row.insertCell(-1);
     cell.innerHTML = value;
