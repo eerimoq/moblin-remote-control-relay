@@ -63,7 +63,7 @@ function updateConnections(connections) {
     }
 }
 
-function loadbridgeId(urlParams) {
+function loadBridgeId(urlParams) {
     bridgeId = urlParams.get('bridgeId');
     if (bridgeId == undefined) {
         bridgeId = crypto.randomUUID();
@@ -72,7 +72,7 @@ function loadbridgeId(urlParams) {
 
 window.addEventListener('DOMContentLoaded', async (event) => {
     const urlParams = new URLSearchParams(window.location.search);
-    loadbridgeId(urlParams);
+    loadBridgeId(urlParams);
     relay = new Relay();
     relay.setupWebsocket();
 });

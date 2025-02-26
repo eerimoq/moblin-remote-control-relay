@@ -15,10 +15,8 @@ const connectionStatusStreamerClosed = "Streamer connection closed";
 const connectionStatusStreamerError = "Streamer connection error";
 const connectionStatusRateLimitExceeded = "Rate limit exceeded";
 
-const defaultAssistantPort = "2345";
-
+let streamerName = undefined;
 let bridgeId = undefined;
-let assistantPort = undefined;
 let timerId = undefined;
 let textEncoder = new TextEncoder();
 
@@ -88,28 +86,6 @@ class Connection {
       if (this.assistantWebsocket.readyState == WebSocket.OPEN) {
         this.bridgeToAssistantBytes += textEncoder.encode(event.data).length;
         this.assistantWebsocket.send(event.data);
-      }
-    };
-  }
-
-  setupAssistantWebsocket() {
-    this.assistantWebsocket = new WebSocket(`ws://localhost:${assistantPort}`);
-    this.setStatus(connectionStatusConnectingToAssistant);
-    this.assistantWebsocket.onopen = (event) => {
-      this.setStatus(connectionStatusConnected);
-    };
-    this.assistantWebsocket.onerror = (event) => {
-      this.setStatus(connectionStatusAssistantError);
-      this.close();
-    };
-    this.assistantWebsocket.onclose = (event) => {
-      this.setStatus(connectionStatusAssistantClosed);
-      this.close();
-    };
-    this.assistantWebsocket.onmessage = async (event) => {
-      if (this.relayDataWebsocket.readyState == WebSocket.OPEN) {
-        this.bridgeToStreamersBytes += textEncoder.encode(event.data).length;
-        this.relayDataWebsocket.send(event.data);
       }
     };
   }
@@ -223,16 +199,12 @@ function makeStreamerUrl() {
   return `${wsScheme}://${baseUrl}/streamer/${bridgeId}`;
 }
 
-function makeAssistantServerPort() {
-  return `${assistantPort}`;
+function makeAssistantUrl() {
+  return `${basePath}assistant.html?streamerName=${streamerName}&bridgeId=${bridgeId}`;
 }
 
 function copyStreamerUrlToClipboard() {
   navigator.clipboard.writeText(makeStreamerUrl());
-}
-
-function copyAssistantPortToClipboard() {
-  navigator.clipboard.writeText(makeAssistantServerPort());
 }
 
 function makeStatusPageUrl() {
@@ -267,24 +239,25 @@ function toggleShowStatusPageUrl() {
 
 function populateRemoteControllerSetup() {
   document.getElementById("streamerAssistantUrl").value = makeStreamerUrl();
-  document.getElementById("assistantServerPort").value =
-    makeAssistantServerPort();
 }
 
 function populateSettings() {
-  document.getElementById("assistantPort").value = assistantPort;
+  document.getElementById("streamerName").value = streamerName;
   document.getElementById("bridgeId").value = bridgeId;
 }
 
 function populateStatusPage() {
-  document.getElementById("statusPageUrl").value = makeStatusPageUrl();
+}
+
+function makeLocalStorageBridgeIdKey() {
+  return `bridgeId.${streamerName}`;
 }
 
 function saveSettings() {
-  assistantPort = document.getElementById("assistantPort").value;
-  localStorage.setItem("assistantPort", assistantPort);
+  streamerName = document.getElementById("streamerName").value;
   bridgeId = document.getElementById("bridgeId").value;
-  localStorage.setItem("bridgeId", bridgeId);
+  localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
+  updateUrl();
   populateRemoteControllerSetup();
   populateStatusPage();
   reset(0);
@@ -292,9 +265,7 @@ function saveSettings() {
 
 function resetSettings() {
   bridgeId = crypto.randomUUID();
-  localStorage.setItem("bridgeId", bridgeId);
-  assistantPort = defaultAssistantPort;
-  localStorage.setItem("assistantPort", assistantPort);
+  localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   populateRemoteControllerSetup();
   populateSettings();
   populateStatusPage();
@@ -302,20 +273,6 @@ function resetSettings() {
 }
 
 function updateConnections() {
-  let body = getTableBody("connections");
-  for (const connection of connections) {
-    let row = body.insertRow(-1);
-    let statusWithIcon = `<i class="p-icon--spinner u-animation--spin"></i> ${connection.status}`;
-    if (connection.status == connectionStatusConnected) {
-      statusWithIcon = `<i class="p-icon--success"></i> ${connection.status}`;
-    } else if (connection.isAborted()) {
-      statusWithIcon = `<i class="p-icon--error"></i> ${connection.status}`;
-    }
-    appendToRow(row, statusWithIcon);
-    appendToRow(row, timeAgoString(connection.statusUpdateTime));
-    appendToRow(row, bitrateToString(connection.bitrateToStreamer));
-    appendToRow(row, bitrateToString(connection.bitrateToAssistant));
-  }
 }
 
 function updateStatus() {
@@ -367,32 +324,33 @@ function toggleShowBridgeId() {
   }
 }
 
+function loadStreamerName(urlParams) {
+  streamerName = urlParams.get("streamerName");
+  if (streamerName == undefined) {
+    streamerName = "Anna";
+  }
+}
+
 function loadBridgeId(urlParams) {
   bridgeId = urlParams.get("bridgeId");
   if (bridgeId == undefined) {
-    bridgeId = localStorage.getItem("bridgeId");
+    bridgeId = localStorage.getItem(makeLocalStorageBridgeIdKey());
   }
   if (bridgeId == undefined) {
     bridgeId = crypto.randomUUID();
   }
-  localStorage.setItem("bridgeId", bridgeId);
+  localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
 }
 
-function loadAssistantPort(urlParams) {
-  assistantPort = urlParams.get("assistantPort");
-  if (assistantPort == undefined) {
-    assistantPort = localStorage.getItem("assistantPort");
-  }
-  if (assistantPort == undefined) {
-    assistantPort = defaultAssistantPort;
-  }
-  localStorage.setItem("assistantPort", assistantPort);
+function updateUrl() {
+  history.replaceState(history.state, "", makeAssistantUrl());
 }
 
 window.addEventListener("DOMContentLoaded", async (event) => {
   const urlParams = new URLSearchParams(window.location.search);
+  loadStreamerName(urlParams);
   loadBridgeId(urlParams);
-  loadAssistantPort(urlParams);
+  updateUrl();
   relay = new Relay();
   relay.setupControlWebsocket();
   populateRemoteControllerSetup();
