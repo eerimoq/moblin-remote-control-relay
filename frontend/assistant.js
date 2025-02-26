@@ -200,7 +200,7 @@ function makeStreamerUrl() {
 }
 
 function makeAssistantUrl() {
-  return `${basePath}assistant.html?streamerName=${streamerName}&bridgeId=${bridgeId}`;
+  return `${basePath}/assistant.html?streamerName=${streamerName}&bridgeId=${bridgeId}`;
 }
 
 function copyStreamerUrlToClipboard() {
