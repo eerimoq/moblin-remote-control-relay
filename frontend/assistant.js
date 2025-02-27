@@ -420,7 +420,7 @@ function updateStatus(status) {
   appendToRow(row, status.general.isMuted);
   row = generalBody.insertRow(-1);
   appendToRow(row, "Flame");
-  appendToRow(row, Object.keys(status.general.flame)[0]);
+  appendToRow(row, status.general.flame);
   row = generalBody.insertRow(-1);
   appendToRow(row, "WiFi");
   appendToRow(row, status.general.wiFiSsid);
