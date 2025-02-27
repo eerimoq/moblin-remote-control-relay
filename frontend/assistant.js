@@ -13,7 +13,7 @@ const connectionStatusStreamerError = "Streamer connection error";
 const connectionStatusRateLimitExceeded = "Rate limit exceeded";
 
 let streamerName = undefined;
-let password = "Rgq73ntHOBihCvl64fGK";
+let password = undefined;
 let bridgeId = undefined;
 let timerId = undefined;
 let textEncoder = new TextEncoder();
