@@ -123,6 +123,21 @@
             <input type="text" name="streamerName" id="streamerName" />
           </div>
           <div class="p-form-password-toggle">
+            <label for="password">Password</label>
+            <button
+              class="p-button--base u-no-margin--bottom has-icon"
+              aria-live="polite"
+              aria-controls="password"
+              onclick="toggleShowPassword()"
+            >
+              <span id="passwordText" class="p-form-password-toggle__label">
+                Show
+              </span>
+              <i id="passwordIcon" class="p-icon--show"></i>
+            </button>
+          </div>
+          <input type="password" name="password" id="password" />
+          <div class="p-form-password-toggle">
             <label for="bridgeId">Bridge id</label>
             <button
               class="p-button--base u-no-margin--bottom has-icon"

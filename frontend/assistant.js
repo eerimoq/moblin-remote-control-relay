@@ -264,7 +264,7 @@ function makeStreamerUrl() {
 }
 
 function makeAssistantUrl() {
-  return `${basePath}/assistant.html?streamerName=${streamerName}&bridgeId=${bridgeId}`;
+  return `${basePath}/assistant.html?streamerName=${streamerName}`;
 }
 
 function copyStreamerUrlToClipboard() {
@@ -299,6 +299,7 @@ function populateRemoteControllerSetup() {
 
 function populateSettings() {
   document.getElementById("streamerName").value = streamerName;
+  document.getElementById("password").value = password;
   document.getElementById("bridgeId").value = bridgeId;
 }
 
@@ -306,8 +307,14 @@ function makeLocalStorageBridgeIdKey() {
   return `bridgeId.${streamerName}`;
 }
 
+function makeLocalStoragePassword() {
+  return `password.${streamerName}`;
+}
+
 function saveSettings() {
   streamerName = document.getElementById("streamerName").value;
+  password = document.getElementById("password").value;
+  localStorage.setItem(makeLocalStoragePassword(), password);
   bridgeId = document.getElementById("bridgeId").value;
   localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   updateUrl();
@@ -353,11 +360,39 @@ function toggleShowBridgeId() {
   }
 }
 
+function toggleShowPassword() {
+  let passwordInput = document.getElementById("password");
+  let passwordText = document.getElementById("passwordText");
+  let passwordIcon = document.getElementById("passwordIcon");
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    passwordText.innerText = "Hide";
+    passwordIcon.classList.add("p-icon--hide");
+    passwordIcon.classList.remove("p-icon--show");
+  } else {
+    passwordInput.type = "password";
+    passwordText.innerText = "Show";
+    passwordIcon.classList.add("p-icon--show");
+    passwordIcon.classList.remove("p-icon--hide");
+  }
+}
+
 function loadStreamerName(urlParams) {
   streamerName = urlParams.get("streamerName");
   if (streamerName == undefined) {
     streamerName = "Anna";
   }
+}
+
+function loadPassword(urlParams) {
+  password = urlParams.get("password");
+  if (password == undefined) {
+    password = localStorage.getItem(makeLocalStoragePassword());
+  }
+  if (password == undefined) {
+    password = "";
+  }
+  localStorage.setItem(makeLocalStoragePassword(), password);
 }
 
 function loadBridgeId(urlParams) {
@@ -400,6 +435,7 @@ function updateStatus(status) {
 window.addEventListener("DOMContentLoaded", async (event) => {
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
+  loadPassword(urlParams);
   loadBridgeId(urlParams);
   updateUrl();
   relay = new Relay();
