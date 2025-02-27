@@ -311,6 +311,27 @@ function makeLocalStoragePassword() {
   return `password.${streamerName}`;
 }
 
+function loadSettings() {
+  streamerName = document.getElementById("loadStreamerSelector").value;
+  password = localStorage.getItem(makeLocalStoragePassword());
+  bridgeId = localStorage.getItem(makeLocalStorageBridgeIdKey());
+  updateUrl();
+  populateRemoteControllerSetup();
+  reset(0);
+}
+
+function populateStreamerSelector() {
+  var loadStreamerSelector = document.getElementById("loadStreamerSelector");
+  const bridgeIdKeys = Object.keys(window.localStorage).filter((key) => {
+    return key.startsWith("bridgeId.");
+  });
+  for (const bridgeIdKey of bridgeIdKeys) {
+    var option = document.createElement("option");
+    option.text = bridgeIdKey.split(".").slice(1).join(".");
+    loadStreamerSelector.add(option);
+  }
+}
+
 function saveSettings() {
   streamerName = document.getElementById("streamerName").value;
   password = document.getElementById("password").value;
@@ -448,5 +469,6 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   relay.setupControlWebsocket();
   populateRemoteControllerSetup();
   populateSettings();
+  populateStreamerSelector();
   updateRelayStatus();
 });
