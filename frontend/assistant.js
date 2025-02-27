@@ -131,14 +131,14 @@ class Connection {
   handleResponse(id, data) {
     if (data.getStatus) {
       this.handleGetStatusResponse(data.getStatus);
-      this.statusTimerId = setTimeout(() => {
-        this.sendGetStatusRequest();
-      }, 5000);
     }
   }
 
   handleGetStatusResponse(status) {
     updateStatus(status);
+    this.statusTimerId = setTimeout(() => {
+      this.sendGetStatusRequest();
+    }, 5000);
   }
 
   sendHello() {
@@ -418,6 +418,12 @@ function updateStatus(status) {
   row = generalBody.insertRow(-1);
   appendToRow(row, "Muted");
   appendToRow(row, status.general.isMuted);
+  row = generalBody.insertRow(-1);
+  appendToRow(row, "Flame");
+  appendToRow(row, Object.keys(status.general.flame)[0]);
+  row = generalBody.insertRow(-1);
+  appendToRow(row, "WiFi");
+  appendToRow(row, status.general.wiFiSsid);
   let topLeftBody = getTableBodyNoHead("statusTopLeft");
   for (const name of Object.keys(status.topLeft).sort()) {
     row = topLeftBody.insertRow(-1);
