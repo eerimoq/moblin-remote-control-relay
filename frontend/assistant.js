@@ -317,6 +317,7 @@ function loadSettings() {
   bridgeId = localStorage.getItem(makeLocalStorageBridgeIdKey());
   updateUrl();
   populateRemoteControllerSetup();
+  populateSettings();
   reset(0);
 }
 
