@@ -85,7 +85,7 @@ function utf8Encode(text) {
   return encoder.encode(text);
 }
 
-async function sha256(data) {
+async function sha256Encode(data) {
   return await crypto.subtle.digest("SHA-256", data);
 }
 
@@ -95,8 +95,8 @@ function base64Encode(data) {
 
 async function hashPassword(password, challenge, salt) {
   let concatenated = password + salt;
-  let hash = await sha256(utf8Encode(concatenated));
+  let hash = await sha256Encode(utf8Encode(concatenated));
   concatenated = base64Encode(hash) + challenge;
-  hash = await sha256(utf8Encode(concatenated));
+  hash = await sha256Encode(utf8Encode(concatenated));
   return base64Encode(hash);
 }
