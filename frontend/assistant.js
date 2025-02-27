@@ -13,6 +13,7 @@ const connectionStatusStreamerError = "Streamer connection error";
 const connectionStatusRateLimitExceeded = "Rate limit exceeded";
 
 let streamerName = undefined;
+let password = "Rgq73ntHOBihCvl64fGK";
 let bridgeId = undefined;
 let timerId = undefined;
 let textEncoder = new TextEncoder();
@@ -23,12 +24,15 @@ class Connection {
     this.relayDataWebsocket = undefined;
     this.status = connectionStatusConnectingToRelay;
     this.statusTimerId = undefined;
+    this.challenge = "";
+    this.salt = "";
+    this.streamerIdentified = false;
   }
 
   close() {
     if (this.statusTimerId != undefined) {
-     clearTimeout(this.statusTimerId);
-     this.statusTimerId = undefined;
+      clearTimeout(this.statusTimerId);
+      this.statusTimerId = undefined;
     }
     if (this.relayDataWebsocket != undefined) {
       this.relayDataWebsocket.close();
@@ -64,13 +68,10 @@ class Connection {
     );
     this.status = connectionStatusConnectingToRelay;
     this.relayDataWebsocket.onopen = (event) => {
-      this.send({hello: {
-        apiVersion: "1.0",
-        authentication: {
-          challenge: "1",
-          salt: "2"
-        }
-      }})
+      this.challenge = randomString();
+      this.salt = randomString();
+      this.sendHello();
+      this.streamerIdentified = false;
     };
     this.relayDataWebsocket.onerror = (event) => {
       this.setStatus(connectionStatusStreamerError);
@@ -82,28 +83,49 @@ class Connection {
     };
     this.relayDataWebsocket.onmessage = async (event) => {
       let message = JSON.parse(event.data);
-      // console.log("Got", message);
-      if (message.ping) {
-        this.handlePing();
-      } else if (message.identify) {
-        this.handleIdentify();
-      } else if (message.response) {
-        this.handleResponse(message.response.id, message.response.data);
-      }
+      await this.handleMessage(message);
     };
   }
 
-  handlePing() {
-    this.send({"pong": {}});
+  async handleMessage(message) {
+    // console.log("Got", message);
+    if (message.ping) {
+      this.handlePing();
+    } else if (message.identify) {
+      await this.handleIdentify(message.identify);
+    } else if (message.response) {
+      this.handleResponse(message.response.id, message.response.data);
+    }
   }
 
-  handleIdentify() {
-    this.send({
-      identified: {
-        ok: {}
-      }
-    });
-    this.sendGetStatusRequest();
+  handlePing() {
+    this.send({ pong: {} });
+  }
+
+  async handleIdentify(identify) {
+    if (
+      identify.authentication ==
+      (await hashPassword(password, this.challenge, this.salt))
+    ) {
+      this.streamerIdentified = true;
+      this.send({
+        identified: {
+          result: {
+            ok: {},
+          },
+        },
+      });
+      this.sendGetStatusRequest();
+    } else {
+      this.send({
+        identified: {
+          result: {
+            wrongPassword: {},
+          },
+        },
+      });
+      this.close();
+    }
   }
 
   handleResponse(id, data) {
@@ -119,14 +141,26 @@ class Connection {
     updateStatus(status);
   }
 
+  sendHello() {
+    this.send({
+      hello: {
+        apiVersion: "1.0",
+        authentication: {
+          challenge: this.challenge,
+          salt: this.salt,
+        },
+      },
+    });
+  }
+
   sendGetStatusRequest() {
     this.send({
       request: {
         id: 1,
         data: {
-          getStatus: {}
-        }
-      }
+          getStatus: {},
+        },
+      },
     });
   }
 
@@ -134,6 +168,14 @@ class Connection {
     // console.log("Sending", message);
     this.relayDataWebsocket.send(JSON.stringify(message));
   }
+}
+
+async function sha256(text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 class Relay {

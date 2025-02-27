@@ -4,75 +4,77 @@ let bridgeId = undefined;
 let timerId = undefined;
 
 class Relay {
-    constructor() {
-        this.websocket = undefined;
-    }
+  constructor() {
+    this.websocket = undefined;
+  }
 
-    close() {
-        if (this.websocket != undefined) {
-            this.websocket.close();
-            this.websocket = undefined;
-        }
+  close() {
+    if (this.websocket != undefined) {
+      this.websocket.close();
+      this.websocket = undefined;
     }
+  }
 
-    setupWebsocket() {
-        this.websocket = new WebSocket(`${wsScheme}://${baseUrl}/status/${bridgeId}`);
-        this.websocket.onerror = (event) => {
-            updateConnections([]);
-            reset(10000);
-        };
-        this.websocket.onclose = (event) => {
-            updateConnections([]);
-            reset(10000);
-        };
-        this.websocket.onmessage = async (event) => {
-            let message = JSON.parse(event.data);
-            updateConnections(message.connections);
-        };
-    }
+  setupWebsocket() {
+    this.websocket = new WebSocket(
+      `${wsScheme}://${baseUrl}/status/${bridgeId}`
+    );
+    this.websocket.onerror = (event) => {
+      updateConnections([]);
+      reset(10000);
+    };
+    this.websocket.onclose = (event) => {
+      updateConnections([]);
+      reset(10000);
+    };
+    this.websocket.onmessage = async (event) => {
+      let message = JSON.parse(event.data);
+      updateConnections(message.connections);
+    };
+  }
 }
 
 let relay = undefined;
 
 function reset(delayMs) {
-    relay.close();
-    relay = new Relay();
-    if (timerId != undefined) {
-        clearTimeout(timerId);
-    }
-    timerId = setTimeout(() => {
-        timerId = undefined;
-        relay.setupWebsocket();
-    }, delayMs);
+  relay.close();
+  relay = new Relay();
+  if (timerId != undefined) {
+    clearTimeout(timerId);
+  }
+  timerId = setTimeout(() => {
+    timerId = undefined;
+    relay.setupWebsocket();
+  }, delayMs);
 }
 
 function updateConnections(connections) {
-    let body = getTableBody('connections');
-    for (const connection of connections) {
-        let row = body.insertRow(-1);
-        let statusWithIcon = `<i class="p-icon--spinner u-animation--spin"></i> ${connection.status}`;
-        if (connection.status == connectionStatusConnected) {
-            statusWithIcon = `<i class="p-icon--success"></i> ${connection.status}`;
-        } else if (connection.aborted) {
-            statusWithIcon = `<i class="p-icon--error"></i> ${connection.status}`;
-        }
-        appendToRow(row, statusWithIcon);
-        appendToRow(row, timeAgoString(new Date(connection.statusUpdateTime)));
-        appendToRow(row, bitrateToString(connection.bitrateToStreamer));
-        appendToRow(row, bitrateToString(connection.bitrateToAssistant));
+  let body = getTableBody("connections");
+  for (const connection of connections) {
+    let row = body.insertRow(-1);
+    let statusWithIcon = `<i class="p-icon--spinner u-animation--spin"></i> ${connection.status}`;
+    if (connection.status == connectionStatusConnected) {
+      statusWithIcon = `<i class="p-icon--success"></i> ${connection.status}`;
+    } else if (connection.aborted) {
+      statusWithIcon = `<i class="p-icon--error"></i> ${connection.status}`;
     }
+    appendToRow(row, statusWithIcon);
+    appendToRow(row, timeAgoString(new Date(connection.statusUpdateTime)));
+    appendToRow(row, bitrateToString(connection.bitrateToStreamer));
+    appendToRow(row, bitrateToString(connection.bitrateToAssistant));
+  }
 }
 
 function loadBridgeId(urlParams) {
-    bridgeId = urlParams.get('bridgeId');
-    if (bridgeId == undefined) {
-        bridgeId = crypto.randomUUID();
-    }
+  bridgeId = urlParams.get("bridgeId");
+  if (bridgeId == undefined) {
+    bridgeId = crypto.randomUUID();
+  }
 }
 
-window.addEventListener('DOMContentLoaded', async (event) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    loadBridgeId(urlParams);
-    relay = new Relay();
-    relay.setupWebsocket();
+window.addEventListener("DOMContentLoaded", async (event) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  loadBridgeId(urlParams);
+  relay = new Relay();
+  relay.setupWebsocket();
 });
