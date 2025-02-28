@@ -131,10 +131,12 @@
           <input type="password" name="bridgeId" id="bridgeId" />
           <button onclick="saveSettings()">Save</button>
           <div>
-            <select name="loadStreamerSelector" id="loadStreamerSelector">
-              <option value="" disabled="disabled" selected="">Select a streamer name</option>
-            </select>
+            <select
+              name="loadStreamerSelector"
+              id="loadStreamerSelector"
+            ></select>
             <button onclick="loadSettings()">Load</button>
+            <button onclick="deleteSettings()">Delete</button>
           </div>
         </div>
       </div>

@@ -303,12 +303,12 @@ function populateSettings() {
   document.getElementById("bridgeId").value = bridgeId;
 }
 
-function makeLocalStorageBridgeIdKey() {
-  return `bridgeId.${streamerName}`;
+function makeLocalStorageBridgeIdKey(streamerNameArg) {
+  return `bridgeId.${streamerNameArg ?? streamerName}`;
 }
 
-function makeLocalStoragePassword() {
-  return `password.${streamerName}`;
+function makeLocalStoragePassword(streamerNameArg) {
+  return `password.${streamerNameArg ?? streamerName}`;
 }
 
 function loadSettings() {
@@ -321,8 +321,16 @@ function loadSettings() {
   reset(0);
 }
 
+function deleteSettings() {
+  const streamerName = document.getElementById("loadStreamerSelector").value;
+  localStorage.removeItem(makeLocalStorageBridgeIdKey(streamerName));
+  localStorage.removeItem(makeLocalStoragePassword(streamerName));
+  populateStreamerSelector();
+}
+
 function populateStreamerSelector() {
   var loadStreamerSelector = document.getElementById("loadStreamerSelector");
+  loadStreamerSelector.options.length = 0;
   const bridgeIdKeys = Object.keys(window.localStorage).filter((key) => {
     return key.startsWith("bridgeId.");
   });
@@ -341,6 +349,7 @@ function saveSettings() {
   localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   updateUrl();
   populateRemoteControllerSetup();
+  populateStreamerSelector();
   reset(0);
 }
 
