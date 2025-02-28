@@ -492,7 +492,7 @@ const statusKeyToName = {
 function appendStatuses(body, statuses) {
   for (const key of Object.keys(statuses).sort()) {
     const name = statusKeyToName[key];
-    if (name !== undefined) {
+    if (!name) {
       continue;
     }
     row = body.insertRow(-1);
