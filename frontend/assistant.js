@@ -420,7 +420,7 @@ function loadStreamerName(urlParams) {
   if (streamerName == undefined) {
     const bridgeIdKeys = getLocalStorageBridgeIdKeys();
     if (bridgeIdKeys.length > 0) {
-      streamerName = localStorage.getItem(getStreamerNameFromBridgeIdKey(bridgeIdKeys[0]));
+      streamerName = getStreamerNameFromBridgeIdKey(bridgeIdKeys[0]);
     }
   }
   if (streamerName == undefined) {
