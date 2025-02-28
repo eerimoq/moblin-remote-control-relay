@@ -329,16 +329,23 @@ function deleteSettings() {
 }
 
 function populateStreamerSelector() {
-  var loadStreamerSelector = document.getElementById("loadStreamerSelector");
+  let loadStreamerSelector = document.getElementById("loadStreamerSelector");
   loadStreamerSelector.options.length = 0;
-  const bridgeIdKeys = Object.keys(window.localStorage).filter((key) => {
-    return key.startsWith("bridgeId.");
-  });
-  for (const bridgeIdKey of bridgeIdKeys) {
-    var option = document.createElement("option");
-    option.text = bridgeIdKey.split(".").slice(1).join(".");
+  for (const bridgeIdKey of getLocalStorageBridgeIdKeys()) {
+    let option = document.createElement("option");
+    option.text = getStreamerNameFromBridgeIdKey(bridgeIdKey);
     loadStreamerSelector.add(option);
   }
+}
+
+function getLocalStorageBridgeIdKeys() {
+  return Object.keys(window.localStorage).filter((key) => {
+    return key.startsWith("bridgeId.");
+  }).sort();
+}
+
+function getStreamerNameFromBridgeIdKey(bridgeIdKey) {
+  return bridgeIdKey.split(".").slice(1).join(".");
 }
 
 function saveSettings() {
@@ -410,6 +417,12 @@ function toggleShowPassword() {
 
 function loadStreamerName(urlParams) {
   streamerName = urlParams.get("streamerName");
+  if (streamerName == undefined) {
+    const bridgeIdKeys = getLocalStorageBridgeIdKeys();
+    if (bridgeIdKeys.length > 0) {
+      streamerName = localStorage.getItem(getStreamerNameFromBridgeIdKey(bridgeIdKeys[0]));
+    }
+  }
   if (streamerName == undefined) {
     streamerName = "Anna";
   }
