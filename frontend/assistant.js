@@ -339,9 +339,11 @@ function populateStreamerSelector() {
 }
 
 function getLocalStorageBridgeIdKeys() {
-  return Object.keys(window.localStorage).filter((key) => {
-    return key.startsWith("bridgeId.");
-  }).sort();
+  return Object.keys(window.localStorage)
+    .filter((key) => {
+      return key.startsWith("bridgeId.");
+    })
+    .sort();
 }
 
 function getStreamerNameFromBridgeIdKey(bridgeIdKey) {
@@ -469,16 +471,33 @@ function updateStatus(status) {
   appendToRow(row, "WiFi");
   appendToRow(row, status.general.wiFiSsid);
   let topLeftBody = getTableBodyNoHead("statusTopLeft");
-  for (const name of Object.keys(status.topLeft).sort()) {
-    row = topLeftBody.insertRow(-1);
-    appendToRow(row, name);
-    appendToRow(row, status.topLeft[name].message);
-  }
+  appendStatuses(topLeftBody, status.topLeft);
   let topRightBody = getTableBodyNoHead("statusTopRight");
-  for (const name of Object.keys(status.topRight).sort()) {
-    row = topRightBody.insertRow(-1);
+  appendStatuses(topRightBody, status.topRight);
+}
+
+const statusKeyToName = {
+  camera: "Camera",
+  chat: "Chat",
+  mic: "Mic",
+  stream: "Stream",
+  zoom: "Zoom",
+  audioLevel: "Audio",
+  location: "Location",
+  moblink: "Moblink",
+  remoteControl: "Remote control",
+  rtmpServer: "RTMP/SRT(LA) servers",
+};
+
+function appendStatuses(body, statuses) {
+  for (const key of Object.keys(statuses).sort()) {
+    const name = statusKeyToName[key];
+    if (name !== undefined) {
+      continue;
+    }
+    row = body.insertRow(-1);
     appendToRow(row, name);
-    appendToRow(row, status.topRight[name].message);
+    appendToRow(row, statuses[key].message);
   }
 }
 
