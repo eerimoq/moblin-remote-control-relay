@@ -40,7 +40,6 @@ class Connection {
     if (this.assistantWebsocket != undefined) {
       this.assistantWebsocket.close();
     }
-    clearStatus();
   }
 
   setStatus(newStatus) {
@@ -500,12 +499,6 @@ function updateStatus(status) {
   appendStatuses(topLeftBody, status.topLeft);
   let topRightBody = getTableBodyNoHead("statusTopRight");
   appendStatuses(topRightBody, status.topRight);
-}
-
-function clearStatus() {
-  getTableBodyNoHead("statusGeneral");
-  getTableBodyNoHead("statusTopLeft");
-  getTableBodyNoHead("statusTopRight");
 }
 
 const statusKeyToName = {
