@@ -502,16 +502,29 @@ function updateStatus(status) {
 }
 
 const statusKeyToName = {
+  // Top left
   camera: "Camera",
   chat: "Chat",
   mic: "Mic",
   stream: "Stream",
   zoom: "Zoom",
+  obs: "OBS",
+  events: "Events",
+  viewers: "Viewers",
+  // Top right
   audioLevel: "Audio",
   location: "Location",
   moblink: "Moblink",
   remoteControl: "Remote control",
   rtmpServer: "RTMP/SRT(LA) servers",
+  gameController: "Game controller",
+  bitrate: "Bitrate",
+  uptime: "Uptime",
+  srtla: "Bonding",
+  srtlaRtts: "Bonding RTT:s",
+  recording: "Recording",
+  browserWidgets: "Browser widgets",
+  djiDevices: "DJI devices",
 };
 
 function appendStatuses(body, statuses) {
