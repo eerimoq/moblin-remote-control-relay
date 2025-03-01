@@ -333,6 +333,7 @@ function loadSettings() {
   populateRemoteControllerSetup();
   populateSettings();
   updateStreamerStatus();
+  clear();
   reset(0);
 }
 
@@ -374,6 +375,7 @@ function saveSettings() {
   updateUrl();
   populateRemoteControllerSetup();
   populateStreamerSelector();
+  clear();
   reset(0);
 }
 
@@ -399,8 +401,7 @@ function updateRelayStatus() {
 }
 
 function updateStreamerStatus() {
-  let streamerStatus =
-    `<i class="p-icon--spinner u-animation--spin"></i> Waiting for streamer (${streamerName}) to connect`;
+  let streamerStatus = `<i class="p-icon--spinner u-animation--spin"></i> Waiting for streamer (${streamerName}) to connect`;
   if (connection != undefined) {
     if (connection.status == connectionStatusConnected) {
       streamerStatus = `<i class="p-icon--success"></i> Connected to streamer (${streamerName})`;
@@ -539,6 +540,13 @@ function appendStatuses(body, statuses) {
     appendToRow(row, name);
     appendToRow(row, statuses[key].message);
   }
+}
+
+function clear() {
+  getTableBodyNoHead("statusGeneral");
+  getTableBodyNoHead("statusTopLeft");
+  getTableBodyNoHead("statusTopRight");
+  getElementById("log").innerHTML = "";
 }
 
 window.addEventListener("DOMContentLoaded", async (event) => {
