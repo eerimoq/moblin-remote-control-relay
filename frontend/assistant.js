@@ -1,12 +1,3 @@
-import {
-  randomString,
-  wsScheme,
-  hashPassword,
-  getTableBodyNoHead,
-  appendToRow,
-} from "utils";
-import { baseUrl, basePath } from "config";
-
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";

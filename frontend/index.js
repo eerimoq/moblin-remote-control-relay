@@ -1,13 +1,3 @@
-import {
-  wsScheme,
-  appendToRow,
-  httpScheme,
-  getTableBody,
-  timeAgoString,
-  bitrateToString,
-} from "utils";
-import { baseUrl } from "config";
-
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";

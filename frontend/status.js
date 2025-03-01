@@ -1,12 +1,3 @@
-import {
-  appendToRow,
-  getTableBody,
-  timeAgoString,
-  bitrateToString,
-  wsScheme
-} from "utils";
-import { baseUrl } from "config";
-
 const connectionStatusConnected = "Connected";
 
 let bridgeId = undefined;
