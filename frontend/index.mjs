@@ -6,22 +6,10 @@ import {
   timeAgoString,
   bitrateToString,
   addOnClick,
+  relayStatus,
+  connectionStatus,
 } from "./utils.mjs";
 import { baseUrl } from "./config.mjs";
-
-const relayStatusConnecting = "Connecting...";
-const relayStatusConnected = "Connected";
-const relayStatusKicked = "Kicked";
-
-const connectionStatusConnectingToRelay = "Connecting to Relay...";
-const connectionStatusConnectingToAssistant =
-  "Connecting to assistant on this computer...";
-const connectionStatusAssistantClosed = "Assistant connection closed";
-const connectionStatusAssistantError = "Assistant connection error";
-const connectionStatusConnected = "Connected";
-const connectionStatusStreamerClosed = "Streamer connection closed";
-const connectionStatusStreamerError = "Streamer connection error";
-const connectionStatusRateLimitExceeded = "Rate limit exceeded";
 
 const defaultAssistantPort = "2345";
 
@@ -35,7 +23,7 @@ class Connection {
     this.connectionId = connectionId;
     this.relayDataWebsocket = undefined;
     this.assistantWebsocket = undefined;
-    this.status = connectionStatusConnectingToRelay;
+    this.status = connectionStatus.connectingToRelay;
     this.statusUpdateTime = new Date();
     this.bridgeToStreamersBytes = 0;
     this.bridgeToAssistantBytes = 0;
@@ -58,7 +46,7 @@ class Connection {
     if (this.status == newStatus) {
       return;
     }
-    if (this.isAborted() && newStatus != connectionStatusRateLimitExceeded) {
+    if (this.isAborted() && newStatus != connectionStatus.rateLimitExceeded) {
       return;
     }
     this.status = newStatus;
@@ -68,11 +56,11 @@ class Connection {
 
   isAborted() {
     return (
-      this.status == connectionStatusStreamerClosed ||
-      this.status == connectionStatusStreamerError ||
-      this.status == connectionStatusAssistantClosed ||
-      this.status == connectionStatusAssistantError ||
-      this.status == connectionStatusRateLimitExceeded
+      this.status == connectionStatus.streamerClosed ||
+      this.status == connectionStatus.streamerError ||
+      this.status == connectionStatus.assistantClosed ||
+      this.status == connectionStatus.assistantError ||
+      this.status == connectionStatus.rateLimitExceeded
     );
   }
 
@@ -80,16 +68,16 @@ class Connection {
     this.relayDataWebsocket = new WebSocket(
       `${wsScheme}://${baseUrl}/bridge/data/${bridgeId}/${this.connectionId}`
     );
-    this.status = connectionStatusConnectingToRelay;
+    this.status = connectionStatus.connectingToRelay;
     this.relayDataWebsocket.onopen = (event) => {
       this.setupAssistantWebsocket();
     };
     this.relayDataWebsocket.onerror = (event) => {
-      this.setStatus(connectionStatusStreamerError);
+      this.setStatus(connectionStatus.streamerError);
       this.close();
     };
     this.relayDataWebsocket.onclose = (event) => {
-      this.setStatus(connectionStatusStreamerClosed);
+      this.setStatus(connectionStatus.streamerClosed);
       this.close();
     };
     this.relayDataWebsocket.onmessage = async (event) => {
@@ -102,16 +90,16 @@ class Connection {
 
   setupAssistantWebsocket() {
     this.assistantWebsocket = new WebSocket(`ws://localhost:${assistantPort}`);
-    this.setStatus(connectionStatusConnectingToAssistant);
+    this.setStatus(connectionStatus.connectingToAssistant);
     this.assistantWebsocket.onopen = (event) => {
-      this.setStatus(connectionStatusConnected);
+      this.setStatus(connectionStatus.connected);
     };
     this.assistantWebsocket.onerror = (event) => {
-      this.setStatus(connectionStatusAssistantError);
+      this.setStatus(connectionStatus.assistantError);
       this.close();
     };
     this.assistantWebsocket.onclose = (event) => {
-      this.setStatus(connectionStatusAssistantClosed);
+      this.setStatus(connectionStatus.assistantClosed);
       this.close();
     };
     this.assistantWebsocket.onmessage = async (event) => {
@@ -135,7 +123,7 @@ class Connection {
 class Relay {
   constructor() {
     this.controlWebsocket = undefined;
-    this.status = relayStatusConnecting;
+    this.status = relayStatus.connecting;
     this.statusEnabled = false;
   }
 
@@ -167,17 +155,17 @@ class Relay {
     this.controlWebsocket = new WebSocket(
       `${wsScheme}://${baseUrl}/bridge/control/${bridgeId}`
     );
-    this.setStatus(relayStatusConnecting);
+    this.setStatus(relayStatus.connecting);
     this.controlWebsocket.onopen = (event) => {
-      this.setStatus(relayStatusConnected);
+      this.setStatus(relayStatus.connected);
     };
     this.controlWebsocket.onerror = (event) => {
-      if (this.status != relayStatusKicked) {
+      if (this.status != relayStatus.kicked) {
         reset(10000);
       }
     };
     this.controlWebsocket.onclose = (event) => {
-      if (this.status != relayStatusKicked) {
+      if (this.status != relayStatus.kicked) {
         reset(10000);
       }
     };
@@ -196,11 +184,11 @@ class Relay {
       } else if (message.type == "stopStatus") {
         this.statusEnabled = false;
       } else if (message.type == "kicked") {
-        this.setStatus(relayStatusKicked);
+        this.setStatus(relayStatus.kicked);
       } else if (message.type == "rateLimitExceeded") {
         for (const connection of connections) {
           if (connection.connectionId == message.data.connectionId) {
-            connection.setStatus(connectionStatusRateLimitExceeded);
+            connection.setStatus(connectionStatus.rateLimitExceeded);
           }
         }
       }
@@ -314,7 +302,7 @@ function updateConnections() {
   for (const connection of connections) {
     let row = body.insertRow(-1);
     let statusWithIcon = `<i class="p-icon--spinner u-animation--spin"></i> ${connection.status}`;
-    if (connection.status == connectionStatusConnected) {
+    if (connection.status == connectionStatus.connected) {
       statusWithIcon = `<i class="p-icon--success"></i> ${connection.status}`;
     } else if (connection.isAborted()) {
       statusWithIcon = `<i class="p-icon--error"></i> ${connection.status}`;
@@ -347,12 +335,12 @@ function updateStatus() {
 
 function updateRelayStatus() {
   let relayStatus = '<i class="p-icon--error"></i> Unknown server status';
-  if (relay.status == relayStatusConnecting) {
+  if (relay.status == relayStatus.connecting) {
     relayStatus =
       '<i class="p-icon--spinner u-animation--spin"></i> Connecting to server';
-  } else if (relay.status == relayStatusConnected) {
+  } else if (relay.status == relayStatus.connected) {
     relayStatus = '<i class="p-icon--success"></i> Connected to server';
-  } else if (relay.status == relayStatusKicked) {
+  } else if (relay.status == relayStatus.kicked) {
     relayStatus = '<i class="p-icon--error"></i> Kicked by server';
   }
   document.getElementById("relayStatus").innerHTML = relayStatus;

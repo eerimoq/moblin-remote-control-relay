@@ -2,6 +2,23 @@ const secure = `${window.location.protocol == "https:" ? "s" : ""}`;
 export const wsScheme = `ws${secure}`;
 export const httpScheme = `http${secure}`;
 
+export const relayStatus = {
+  connecting: "Connecting...",
+  connected: "Connected",
+  kicked: "Kicked",
+};
+
+export const connectionStatus = {
+  connectingToRelay: "Connecting to Relay...",
+  connectingToAssistant: "Connecting to assistant on this computer...",
+  assistantClosed: "Assistant connection closed",
+  assistantError: "Assistant connection error",
+  connected: "Connected",
+  streamerClosed: "Streamer connection closed",
+  streamerError: "Streamer connection error",
+  rateLimitExceeded: "Rate limit exceeded",
+};
+
 function numberSuffix(value) {
   return value == 1 ? "" : "s";
 }
@@ -102,5 +119,5 @@ export async function hashPassword(password, challenge, salt) {
 }
 
 export function addOnClick(elementId, func) {
-  document.getElementById(elementId).addEventListener('click', func);
+  document.getElementById(elementId).addEventListener("click", func);
 }
