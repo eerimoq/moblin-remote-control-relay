@@ -369,11 +369,16 @@ function saveSettings() {
 }
 
 function resetSettings() {
-  bridgeId = crypto.randomUUID();
+  regenerateBridgeId();
   localStorage.setItem(makeLocalStorageBridgeIdKey(), bridgeId);
   populateRemoteControllerSetup();
   populateSettings();
   reset(0);
+}
+
+function regenerateBridgeId() {
+  bridgeId = crypto.randomUUID();
+  document.getElementById("bridgeId").value = bridgeId;
 }
 
 function updateRelayStatus() {
@@ -550,6 +555,7 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   addOnClick("loadSettings", loadSettings);
   addOnClick("deleteSettings", deleteSettings);
   addOnClick("resetSettings", resetSettings);
+  addOnClick("regenerateBridgeId", regenerateBridgeId);
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
   loadPassword(urlParams);
