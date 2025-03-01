@@ -334,16 +334,16 @@ function updateStatus() {
 }
 
 function updateRelayStatus() {
-  let relayStatus = '<i class="p-icon--error"></i> Unknown server status';
+  let status = '<i class="p-icon--error"></i> Unknown server status';
   if (relay.status == relayStatus.connecting) {
-    relayStatus =
+    status =
       '<i class="p-icon--spinner u-animation--spin"></i> Connecting to server';
   } else if (relay.status == relayStatus.connected) {
-    relayStatus = '<i class="p-icon--success"></i> Connected to server';
+    status = '<i class="p-icon--success"></i> Connected to server';
   } else if (relay.status == relayStatus.kicked) {
-    relayStatus = '<i class="p-icon--error"></i> Kicked by server';
+    status = '<i class="p-icon--error"></i> Kicked by server';
   }
-  document.getElementById("relayStatus").innerHTML = relayStatus;
+  document.getElementById("relayStatus").innerHTML = status;
 }
 
 function toggleShowBridgeId() {
