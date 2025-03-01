@@ -1,3 +1,11 @@
+import {
+  appendToRow,
+  getTableBody,
+  timeAgoString,
+  bitrateToString,
+  bytesToString,
+} from "utils";
+
 function appendRow(body, group, name, value) {
   let row = body.insertRow(-1);
   appendToRow(row, `${group} / ${name}`);

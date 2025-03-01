@@ -1,3 +1,12 @@
+import {
+  randomString,
+  wsScheme,
+  hashPassword,
+  getTableBodyNoHead,
+  appendToRow,
+} from "utils";
+import { baseUrl, basePath } from "config";
+
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";
@@ -16,7 +25,6 @@ let streamerName = undefined;
 let password = undefined;
 let bridgeId = undefined;
 let timerId = undefined;
-let textEncoder = new TextEncoder();
 
 class Connection {
   constructor(connectionId) {
@@ -185,14 +193,6 @@ class Connection {
     // console.log("Sending", message);
     this.relayDataWebsocket.send(JSON.stringify(message));
   }
-}
-
-async function sha256(text) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 class Relay {
@@ -536,7 +536,7 @@ function appendStatuses(body, statuses) {
     if (!name) {
       continue;
     }
-    row = body.insertRow(-1);
+    let row = body.insertRow(-1);
     appendToRow(row, name);
     appendToRow(row, statuses[key].message);
   }
