@@ -151,10 +151,9 @@ class Connection {
   }
 
   handleLogEvent(log) {
-    const log = getElementById("log");
     let entry = document.createElement("div");
     entry.innerHTML = log.entry;
-    log.add(entry);
+    getElementById("log").add(entry);
   }
 
   sendHello() {
