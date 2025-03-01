@@ -546,7 +546,7 @@ function clear() {
   getTableBodyNoHead("statusGeneral");
   getTableBodyNoHead("statusTopLeft");
   getTableBodyNoHead("statusTopRight");
-  getElementById("log").innerHTML = "";
+  document.getElementById("log").innerHTML = "";
 }
 
 window.addEventListener("DOMContentLoaded", async (event) => {
