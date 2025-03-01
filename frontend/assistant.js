@@ -51,6 +51,7 @@ class Connection {
       return;
     }
     this.status = newStatus;
+    updateStreamerStatus();
   }
 
   isAborted() {
@@ -236,19 +237,16 @@ class Relay {
       let message = JSON.parse(event.data);
       if (message.type == "connect") {
         let connectionId = message.data.connectionId;
-        let connection = new Connection(connectionId);
-        connection.setupRelayDataWebsocket();
-        connections.unshift(connection);
-        while (connections.length > 5) {
-          connections.pop().close();
+        if (connection != undefined) {
+          connection.close();
         }
+        connection = new Connection(connectionId);
+        connection.setupRelayDataWebsocket();
       } else if (message.type == "kicked") {
         this.setStatus(relayStatusKicked);
       } else if (message.type == "rateLimitExceeded") {
-        for (const connection of connections) {
-          if (connection.connectionId == message.data.connectionId) {
-            connection.setStatus(connectionStatusRateLimitExceeded);
-          }
+        if (connection != undefined) {
+          connection.setStatus(connectionStatusRateLimitExceeded);
         }
       }
     };
@@ -256,13 +254,13 @@ class Relay {
 }
 
 let relay = undefined;
-let connections = [];
+let connection = undefined;
 
 function reset(delayMs) {
-  for (const connection of connections) {
+  if (connection != undefined) {
     connection.close();
+    connection = undefined;
   }
-  connections = [];
   relay.close();
   relay = new Relay();
   if (timerId != undefined) {
@@ -396,6 +394,17 @@ function updateRelayStatus() {
     relayStatus = '<i class="p-icon--error"></i> Kicked by server';
   }
   document.getElementById("relayStatus").innerHTML = relayStatus;
+}
+
+function updateStreamerStatus() {
+  let streamerStatus =
+    '<i class="p-icon--spinner u-animation--spin"></i> Waiting for streamer to connect';
+  if (connection != undefined) {
+    if (connection.status == connectionStatusConnected) {
+      streamerStatus = '<i class="p-icon--success"></i> Connected to streamer';
+    }
+  }
+  document.getElementById("streamerStatus").innerHTML = streamerStatus;
 }
 
 function toggleShowBridgeId() {
@@ -534,4 +543,5 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   populateSettings();
   populateStreamerSelector();
   updateRelayStatus();
+  updateStreamerStatus();
 });
