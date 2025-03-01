@@ -96,6 +96,8 @@ class Connection {
       await this.handleIdentify(message.identify);
     } else if (message.response) {
       this.handleResponse(message.response.id, message.response.data);
+    } else if (message.event) {
+      this.handleEvent(message.event.data);
     }
   }
 
@@ -140,6 +142,19 @@ class Connection {
     this.statusTimerId = setTimeout(() => {
       this.sendGetStatusRequest();
     }, 5000);
+  }
+
+  handleEvent(data) {
+    if (data.log) {
+      this.handleLogEvent(data.log);
+    }
+  }
+
+  handleLogEvent(log) {
+    const log = getElementById("log");
+    let entry = document.createElement("div");
+    entry.innerHTML = log.entry;
+    log.add(entry);
   }
 
   sendHello() {
