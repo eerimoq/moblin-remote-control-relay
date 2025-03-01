@@ -1,9 +1,16 @@
+import {
+  wsScheme,
+  appendToRow,
+  httpScheme,
+  getTableBody,
+  timeAgoString,
+  bitrateToString,
+} from "./utils.js";
+import { baseUrl } from "./config.js";
+
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";
-
-const assistantStatusConnecting = "Connecting...";
-const assistatnStatusConnected = "Connected";
 
 const connectionStatusConnectingToRelay = "Connecting to Relay...";
 const connectionStatusConnectingToAssistant =

@@ -57,8 +57,7 @@
       <div class="col-8">
         <div class="p-card">
           <h2>Log</h2>
-          <div id="log" style="overflow-y: scroll; height:400px;">
-          </div>
+          <div id="log" style="overflow-y: scroll; height: 400px"></div>
         </div>
       </div>
       <div class="col-2"></div>
@@ -142,14 +141,20 @@
             </button>
           </div>
           <input type="password" name="bridgeId" id="bridgeId" />
-          <button class="p-button--positive" onclick="saveSettings()">Apply</button>
+          <button class="p-button--positive" onclick="saveSettings()">
+            Apply
+          </button>
           <div>
             <select
               name="loadStreamerSelector"
               id="loadStreamerSelector"
             ></select>
-            <button class="p-button--positive" onclick="loadSettings()">Load and apply</button>
-            <button class="p-button--negative" onclick="deleteSettings()">Delete</button>
+            <button class="p-button--positive" onclick="loadSettings()">
+              Load and apply
+            </button>
+            <button class="p-button--negative" onclick="deleteSettings()">
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -178,8 +183,6 @@
       </div>
     </div>
 
-    <script src="config.js"></script>
-    <script src="utils.js"></script>
-    <script src="assistant.js"></script>
+    <script src="assistant.js" type="module"></script>
   </body>
 </html>

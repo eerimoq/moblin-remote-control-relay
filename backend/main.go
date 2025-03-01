@@ -375,7 +375,7 @@ func updateStats() {
 }
 
 func serveConfigJs(w http.ResponseWriter, _ *http.Request) {
-	configJs := fmt.Sprintf("const baseUrl = `${window.location.host}%v`; const basePath = `%v`;", *reverseProxyBase, *reverseProxyBase)
+	configJs := fmt.Sprintf("export const baseUrl = `${window.location.host}%v`; export const basePath = `%v`;", *reverseProxyBase, *reverseProxyBase)
 	w.Header().Add("content-type", "text/javascript")
 	w.Write([]byte(configJs))
 }

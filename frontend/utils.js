@@ -1,12 +1,12 @@
 const secure = `${window.location.protocol == "https:" ? "s" : ""}`;
-const wsScheme = `ws${secure}`;
-const httpScheme = `http${secure}`;
+export const wsScheme = `ws${secure}`;
+export const httpScheme = `http${secure}`;
 
 function numberSuffix(value) {
   return value == 1 ? "" : "s";
 }
 
-function timeAgoString(fromDate) {
+export function timeAgoString(fromDate) {
   let now = new Date();
   let secondsAgo = parseInt((now.getTime() - fromDate.getTime()) / 1000);
   if (secondsAgo < 60) {
@@ -22,7 +22,7 @@ function timeAgoString(fromDate) {
   }
 }
 
-function bitrateToString(bitrate) {
+export function bitrateToString(bitrate) {
   if (bitrate < 1000) {
     return `${bitrate} bps`;
   } else if (bitrate < 1000000) {
@@ -34,7 +34,7 @@ function bitrateToString(bitrate) {
   }
 }
 
-function bytesToString(bytes) {
+export function bytesToString(bytes) {
   if (bytes < 1000) {
     return `${bytes} B`;
   } else if (bytes < 1000000) {
@@ -49,7 +49,7 @@ function bytesToString(bytes) {
   }
 }
 
-function getTableBody(id) {
+export function getTableBody(id) {
   let table = document.getElementById(id);
   while (table.rows.length > 1) {
     table.deleteRow(-1);
@@ -57,7 +57,7 @@ function getTableBody(id) {
   return table.tBodies[0];
 }
 
-function getTableBodyNoHead(id) {
+export function getTableBodyNoHead(id) {
   let table = document.getElementById(id);
   while (table.rows.length > 0) {
     table.deleteRow(-1);
@@ -65,7 +65,7 @@ function getTableBodyNoHead(id) {
   return table.tBodies[0];
 }
 
-function appendToRow(row, value) {
+export function appendToRow(row, value) {
   let cell = row.insertCell(-1);
   cell.innerHTML = value;
 }
@@ -74,7 +74,7 @@ function dec2hex(dec) {
   return dec.toString(16).padStart(2, "0");
 }
 
-function randomString() {
+export function randomString() {
   var arr = new Uint8Array((64 || 40) / 2);
   window.crypto.getRandomValues(arr);
   return Array.from(arr, dec2hex).join("");
@@ -93,7 +93,7 @@ function base64Encode(data) {
   return btoa(String.fromCharCode(...new Uint8Array(data)));
 }
 
-async function hashPassword(password, challenge, salt) {
+export async function hashPassword(password, challenge, salt) {
   let concatenated = password + salt;
   let hash = await sha256Encode(utf8Encode(concatenated));
   concatenated = base64Encode(hash) + challenge;

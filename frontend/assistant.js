@@ -1,3 +1,12 @@
+import {
+  randomString,
+  wsScheme,
+  hashPassword,
+  appendToRow,
+  getTableBodyNoHead,
+} from "./utils.js";
+import { basePath, baseUrl } from "./config.js";
+
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";
 const relayStatusKicked = "Kicked";
