@@ -5,6 +5,7 @@ import {
   getTableBody,
   timeAgoString,
   bitrateToString,
+  addOnClick,
 } from "./utils.js";
 import { baseUrl } from "./config.js";
 
@@ -397,6 +398,21 @@ function loadAssistantPort(urlParams) {
 }
 
 window.addEventListener("DOMContentLoaded", async (event) => {
+  addOnClick(
+    "toggleShowMoblinStreamerAssistantUrl",
+    toggleShowMoblinStreamerAssistantUrl
+  );
+  addOnClick("copyStreamerUrlToClipboard", copyStreamerUrlToClipboard);
+  addOnClick("copyAssistantPortToClipboard", copyAssistantPortToClipboard);
+  addOnClick("toggleShowBridgeId", toggleShowBridgeId);
+  addOnClick("saveSettings", saveSettings);
+  addOnClick("toggleShowStatusPageUrl", toggleShowStatusPageUrl);
+  addOnClick("copyStatusPageUrlToClipboard", copyStatusPageUrlToClipboard);
+  addOnClick("resetSettings", resetSettings);
+  addOnClick(
+    "toggleShowMoblinStreamerAssistantUrl",
+    toggleShowMoblinStreamerAssistantUrl
+  );
   const urlParams = new URLSearchParams(window.location.search);
   loadBridgeId(urlParams);
   loadAssistantPort(urlParams);

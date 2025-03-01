@@ -77,11 +77,11 @@
               class="p-button--base u-no-margin--right"
               aria-live="polite"
               aria-controls="streamerAssistantUrl"
-              onclick="toggleShowMoblinStreamerAssistantUrl()"
+              id="toggleShowMoblinStreamerAssistantUrl"
             >
               <i id="streamerAssistantUrlIcon" class="p-icon--show"></i>
             </button>
-            <button onclick="copyStreamerUrlToClipboard()">Copy</button>
+            <button id="copyStreamerUrlToClipboard">Copy</button>
           </div>
           <div>
             Paste it in Settings → Remote control → Streamer → Assistant URL.
@@ -96,7 +96,7 @@
               readonly
             />
             <div style="padding-left: 15px"></div>
-            <button onclick="copyAssistantPortToClipboard()">Copy</button>
+            <button id="copyAssistantPortToClipboard">Copy</button>
           </div>
           <div style="padding-bottom: 20px">
             Paste it in Settings → Remote control → Assistant -> Server port.
@@ -127,7 +127,7 @@
               class="p-button--base u-no-margin--bottom has-icon"
               aria-live="polite"
               aria-controls="bridgeId"
-              onclick="toggleShowBridgeId()"
+              id="toggleShowBridgeId"
             >
               <span id="bridgeIdText" class="p-form-password-toggle__label">
                 Show
@@ -136,9 +136,7 @@
             </button>
           </div>
           <input type="password" name="bridgeId" id="bridgeId" />
-          <button class="p-button--positive" onclick="saveSettings()">
-            Save
-          </button>
+          <button class="p-button--positive" id="saveSettings">Save</button>
         </div>
       </div>
       <div class="col-2"></div>
@@ -161,11 +159,11 @@
               class="p-button--base u-no-margin--right"
               aria-live="polite"
               aria-controls="statusPageUrl"
-              onclick="toggleShowStatusPageUrl()"
+              id="toggleShowStatusPageUrl"
             >
               <i id="statusPageUrlIcon" class="p-icon--show"></i>
             </button>
-            <button onclick="copyStatusPageUrlToClipboard()">Copy</button>
+            <button id="copyStatusPageUrlToClipboard">Copy</button>
           </div>
           Open it on any device.
           <div class="p-notification--caution is-inline">
@@ -197,9 +195,7 @@
     </div>
 
     <div class="u-align--center">
-      <button class="p-button--negative" onclick="resetSettings()">
-        Reset
-      </button>
+      <button class="p-button--negative" id="resetSettings">Reset</button>
     </div>
 
     <div class="row" style="padding-bottom: 20px">

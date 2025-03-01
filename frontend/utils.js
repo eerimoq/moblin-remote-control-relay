@@ -100,3 +100,7 @@ export async function hashPassword(password, challenge, salt) {
   hash = await sha256Encode(utf8Encode(concatenated));
   return base64Encode(hash);
 }
+
+export function addOnClick(elementId, func) {
+  document.getElementById(elementId).addEventListener('click', func);
+}

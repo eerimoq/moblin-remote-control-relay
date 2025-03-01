@@ -4,6 +4,7 @@ import {
   hashPassword,
   appendToRow,
   getTableBodyNoHead,
+  addOnClick,
 } from "./utils.js";
 import { basePath, baseUrl } from "./config.js";
 
@@ -550,6 +551,17 @@ function clear() {
 }
 
 window.addEventListener("DOMContentLoaded", async (event) => {
+  addOnClick(
+    "toggleShowMoblinStreamerAssistantUrl",
+    toggleShowMoblinStreamerAssistantUrl
+  );
+  addOnClick("copyStreamerUrlToClipboard", copyStreamerUrlToClipboard);
+  addOnClick("toggleShowPassword", toggleShowPassword);
+  addOnClick("toggleShowBridgeId", toggleShowBridgeId);
+  addOnClick("saveSettings", saveSettings);
+  addOnClick("loadSettings", loadSettings);
+  addOnClick("deleteSettings", deleteSettings);
+  addOnClick("resetSettings", resetSettings);
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
   loadPassword(urlParams);
