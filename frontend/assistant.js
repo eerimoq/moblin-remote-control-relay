@@ -332,6 +332,7 @@ function loadSettings() {
   updateUrl();
   populateRemoteControllerSetup();
   populateSettings();
+  updateStreamerStatus();
   reset(0);
 }
 
