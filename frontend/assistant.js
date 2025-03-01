@@ -399,10 +399,10 @@ function updateRelayStatus() {
 
 function updateStreamerStatus() {
   let streamerStatus =
-    '<i class="p-icon--spinner u-animation--spin"></i> Waiting for streamer to connect';
+    `<i class="p-icon--spinner u-animation--spin"></i> Waiting for streamer (${streamerName}) to connect`;
   if (connection != undefined) {
     if (connection.status == connectionStatusConnected) {
-      streamerStatus = '<i class="p-icon--success"></i> Connected to streamer';
+      streamerStatus = `<i class="p-icon--success"></i> Connected to streamer (${streamerName})`;
     }
   }
   document.getElementById("streamerStatus").innerHTML = streamerStatus;
@@ -453,6 +453,7 @@ function loadStreamerName(urlParams) {
   if (streamerName == undefined) {
     streamerName = "Anna";
   }
+  updateStreamerStatus();
 }
 
 function loadPassword(urlParams) {
