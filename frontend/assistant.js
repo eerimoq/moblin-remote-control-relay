@@ -153,7 +153,7 @@ class Connection {
   handleLogEvent(log) {
     let entry = document.createElement("div");
     entry.innerHTML = log.entry;
-    document.getElementById("log").add(entry);
+    document.getElementById("log").appendChild(entry);
   }
 
   sendHello() {
