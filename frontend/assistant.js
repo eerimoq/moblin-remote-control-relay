@@ -48,6 +48,7 @@ class Connection {
       return;
     }
     if (this.isAborted() && newStatus != connectionStatusRateLimitExceeded) {
+      updateStreamerStatus();
       return;
     }
     this.status = newStatus;
@@ -119,6 +120,7 @@ class Connection {
           },
         },
       });
+      this.setStatus(connectionStatusConnected);
       this.sendGetStatusRequest();
     } else {
       this.send({
