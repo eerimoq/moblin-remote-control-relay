@@ -5,8 +5,8 @@ import {
   appendToRow,
   getTableBodyNoHead,
   addOnClick,
-} from "./utils.js";
-import { basePath, baseUrl } from "./config.js";
+} from "./utils.mjs";
+import { basePath, baseUrl } from "./config.mjs";
 
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";

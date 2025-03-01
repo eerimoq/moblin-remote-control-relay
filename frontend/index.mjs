@@ -6,8 +6,8 @@ import {
   timeAgoString,
   bitrateToString,
   addOnClick,
-} from "./utils.js";
-import { baseUrl } from "./config.js";
+} from "./utils.mjs";
+import { baseUrl } from "./config.mjs";
 
 const relayStatusConnecting = "Connecting...";
 const relayStatusConnected = "Connected";

@@ -4,7 +4,7 @@ import {
   bitrateToString,
   bytesToString,
   getTableBody,
-} from "./utils.js";
+} from "./utils.mjs";
 
 function appendRow(body, group, name, value) {
   let row = body.insertRow(-1);

@@ -4,8 +4,8 @@ import {
   bitrateToString,
   getTableBody,
   wsScheme,
-} from "./utils.js";
-import { baseUrl } from "./config.js";
+} from "./utils.mjs";
+import { baseUrl } from "./config.mjs";
 
 const connectionStatusConnected = "Connected";
 
