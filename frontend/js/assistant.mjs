@@ -113,7 +113,11 @@ class Connection {
     } else if (message.identify) {
       await this.handleIdentify(message.identify);
     } else if (message.response) {
-      this.handleResponse(message.response.id, message.response.data);
+      this.handleResponse(
+        message.response.id,
+        message.response.result,
+        message.response.data
+      );
     } else if (message.event) {
       this.handleEvent(message.event.data);
     }
@@ -150,7 +154,14 @@ class Connection {
     }
   }
 
-  handleResponse(id, data) {
+  handleResponse(id, result, data) {
+    if (!result.ok) {
+      console.log("Unsuccessful request: ", result);
+      return;
+    }
+    if (!data) {
+      return;
+    }
     if (data.getStatus) {
       this.handleGetStatusResponse(data.getStatus);
     }
@@ -172,7 +183,9 @@ class Connection {
   }
 
   handleStateEvent(state) {
-    setDebugLogging(state.data.debugLogging);
+    if (state.data.debugLogging !== undefined) {
+      setDebugLogging(state.data.debugLogging);
+    }
   }
 
   handleLogEvent(log) {
@@ -205,7 +218,7 @@ class Connection {
   }
 
   send(message) {
-    console.log("Sending", message);
+    // console.log("Sending", message);
     this.relayDataWebsocket.send(JSON.stringify(message));
   }
 }
