@@ -5,6 +5,7 @@ import {
   appendToRow,
   getTableBodyNoHead,
   addOnClick,
+  addOnChange,
   relayStatus,
   connectionStatus,
 } from "./utils.mjs";
@@ -24,6 +25,7 @@ class Connection {
     this.challenge = "";
     this.salt = "";
     this.streamerIdentified = false;
+    this.nextId = 1;
   }
 
   close() {
@@ -86,6 +88,24 @@ class Connection {
     };
   }
 
+  setDebugLogging(on) {
+    this.send({
+      request: {
+        id: this.getNextId(),
+        data: {
+          setDebugLogging: {
+            on: on,
+          },
+        },
+      },
+    });
+  }
+
+  getNextId() {
+    this.nextId += 1;
+    return this.nextId;
+  }
+
   async handleMessage(message) {
     // console.log("Got", message);
     if (message.ping) {
@@ -144,9 +164,15 @@ class Connection {
   }
 
   handleEvent(data) {
-    if (data.log) {
+    if (data.state) {
+      this.handleStateEvent(data.state);
+    } else if (data.log) {
       this.handleLogEvent(data.log);
     }
+  }
+
+  handleStateEvent(state) {
+    setDebugLogging(state.data.debugLogging);
   }
 
   handleLogEvent(log) {
@@ -170,7 +196,7 @@ class Connection {
   sendGetStatusRequest() {
     this.send({
       request: {
-        id: 1,
+        id: this.getNextId(),
         data: {
           getStatus: {},
         },
@@ -179,7 +205,7 @@ class Connection {
   }
 
   send(message) {
-    // console.log("Sending", message);
+    console.log("Sending", message);
     this.relayDataWebsocket.send(JSON.stringify(message));
   }
 }
@@ -543,6 +569,17 @@ function clear() {
   document.getElementById("log").innerHTML = "";
 }
 
+function toggleDebugLogging(event) {
+  if (connection === undefined) {
+    return;
+  }
+  connection.setDebugLogging(event.target.checked);
+}
+
+function setDebugLogging(on) {
+  document.getElementById("controlDebugLogging").checked = on;
+}
+
 window.addEventListener("DOMContentLoaded", async (event) => {
   addOnClick(
     "toggleShowMoblinStreamerAssistantUrl",
@@ -556,6 +593,7 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   addOnClick("deleteSettings", deleteSettings);
   addOnClick("resetSettings", resetSettings);
   addOnClick("regenerateBridgeId", regenerateBridgeId);
+  addOnChange("controlDebugLogging", toggleDebugLogging);
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
   loadPassword(urlParams);

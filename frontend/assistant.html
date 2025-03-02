@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moblin Remote Control Assistant</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="css/vanilla-framework-version-4.14.0.min.css" />
+    <link
+      rel="stylesheet"
+      href="css/vanilla-framework-version-4.14.0.min.css"
+    />
   </head>
 
   <body class="is-dark" style="background: #001c0b">
@@ -58,6 +61,27 @@
         <div class="p-card">
           <h2>Log</h2>
           <div id="log" style="overflow-y: scroll; height: 400px"></div>
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+        <div class="p-card">
+          <h2>Control</h2>
+          <label class="p-switch">
+            <input
+              id="controlDebugLogging"
+              type="checkbox"
+              class="p-switch__input"
+              checked=""
+              role="switch"
+            />
+            <span class="p-switch__slider"></span>
+            <span class="p-switch__label">Debug logging</span>
+          </label>
         </div>
       </div>
       <div class="col-2"></div>
@@ -140,9 +164,9 @@
               <i id="bridgeIdIcon" class="p-icon--show"></i>
             </button>
           </div>
-          <div style="display: flex;">
+          <div style="display: flex">
             <input type="password" name="bridgeId" id="bridgeId" />
-            <button id="regenerateBridgeId" style="margin-left: 10px;">
+            <button id="regenerateBridgeId" style="margin-left: 10px">
               Regenerate
             </button>
           </div>

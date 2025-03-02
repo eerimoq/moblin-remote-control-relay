@@ -121,3 +121,7 @@ export async function hashPassword(password, challenge, salt) {
 export function addOnClick(elementId, func) {
   document.getElementById(elementId).addEventListener("click", func);
 }
+
+export function addOnChange(elementId, func) {
+  document.getElementById(elementId).addEventListener("change", func);
+}
