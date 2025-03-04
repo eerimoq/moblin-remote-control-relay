@@ -29,7 +29,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=erik
-ExecStart=/home/erik/moblin-remote-control-relay/backend/moblin-remote-control-relay -address localhost:9998 -reverse_proxy_base /moblin-remote-control-relay
+ExecStart=/home/erik/moblin-remote-control-relay/backend/moblin-remote-control-relay -address 127.0.0.1:9998 -reverse_proxy_base /moblin-remote-control-relay
 WorkingDirectory=/home/erik/moblin-remote-control-relay/backend
 KillSignal=SIGINT
 
@@ -53,7 +53,7 @@ sudo systemctl start moblin-remote-control-relay
 
 ```
 location /moblin-remote-control-relay/ {
-    proxy_pass http://localhost:9998/;
+    proxy_pass http://127.0.0.1:9998/;
     proxy_http_version  1.1;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Upgrade $http_upgrade;
