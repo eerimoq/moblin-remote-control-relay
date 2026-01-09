@@ -4,6 +4,14 @@ Server you can use (hosted in Tokyo): https://moblin.mys-lang.org/moblin-remote-
 
 <img src="screenshot.png">
 
+# Development
+
+Build and run.
+
+```
+(cd backend && go run .)
+```
+
 # Cloud service
 
 A simple Go program serves a simple website and websocket endpoints.
