@@ -59,18 +59,40 @@
       <div class="col-2"></div>
       <div class="col-8">
         <div class="p-card">
-          <h2>Log</h2>
-          <div id="log" style="overflow-y: scroll; height: 400px"></div>
-        </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
           <h2>Control</h2>
+          <label class="p-switch">
+            <input
+              id="controlLive"
+              type="checkbox"
+              class="p-switch__input"
+              checked=""
+              role="switch"
+            />
+            <span class="p-switch__slider"></span>
+            <span class="p-switch__label">Live</span>
+          </label>
+          <label class="p-switch">
+            <input
+              id="controlRecording"
+              type="checkbox"
+              class="p-switch__input"
+              checked=""
+              role="switch"
+            />
+            <span class="p-switch__slider"></span>
+            <span class="p-switch__label">Recording</span>
+          </label>
+          <label class="p-switch">
+            <input
+              id="controlMuted"
+              type="checkbox"
+              class="p-switch__input"
+              checked=""
+              role="switch"
+            />
+            <span class="p-switch__slider"></span>
+            <span class="p-switch__label">Muted</span>
+          </label>
           <label class="p-switch">
             <input
               id="controlDebugLogging"
@@ -82,6 +104,17 @@
             <span class="p-switch__slider"></span>
             <span class="p-switch__label">Debug logging</span>
           </label>
+        </div>
+      </div>
+      <div class="col-2"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-2"></div>
+      <div class="col-8">
+        <div class="p-card">
+          <h2>Log</h2>
+          <div id="log" style="overflow-y: scroll; height: 400px"></div>
         </div>
       </div>
       <div class="col-2"></div>

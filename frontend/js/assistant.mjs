@@ -88,6 +88,45 @@ class Connection {
     };
   }
 
+  setLive(on) {
+    this.send({
+      request: {
+        id: this.getNextId(),
+        data: {
+          setStream: {
+            on: on,
+          },
+        },
+      },
+    });
+  }
+
+  setRecording(on) {
+    this.send({
+      request: {
+        id: this.getNextId(),
+        data: {
+          setRecord: {
+            on: on,
+          },
+        },
+      },
+    });
+  }
+
+  setMuted(on) {
+    this.send({
+      request: {
+        id: this.getNextId(),
+        data: {
+          setMute: {
+            on: on,
+          },
+        },
+      },
+    });
+  }
+
   setDebugLogging(on) {
     this.send({
       request: {
@@ -183,6 +222,15 @@ class Connection {
   }
 
   handleStateEvent(state) {
+    if (state.data.streaming !== undefined) {
+      setLive(state.data.streaming);
+    }
+    if (state.data.recording !== undefined) {
+      setRecording(state.data.recording);
+    }
+    if (state.data.muted !== undefined) {
+      setMuted(state.data.muted);
+    }
     if (state.data.debugLogging !== undefined) {
       setDebugLogging(state.data.debugLogging);
     }
@@ -582,6 +630,39 @@ function clear() {
   document.getElementById("log").innerHTML = "";
 }
 
+function toggleLive(event) {
+  if (connection === undefined) {
+    return;
+  }
+  connection.setLive(event.target.checked);
+}
+
+function setLive(on) {
+  document.getElementById("controlLive").checked = on;
+}
+
+function toggleRecording(event) {
+  if (connection === undefined) {
+    return;
+  }
+  connection.setRecording(event.target.checked);
+}
+
+function setRecording(on) {
+  document.getElementById("controlRecording").checked = on;
+}
+
+function toggleMuted(event) {
+  if (connection === undefined) {
+    return;
+  }
+  connection.setMuted(event.target.checked);
+}
+
+function setMuted(on) {
+  document.getElementById("controlMuted").checked = on;
+}
+
 function toggleDebugLogging(event) {
   if (connection === undefined) {
     return;
@@ -606,6 +687,9 @@ window.addEventListener("DOMContentLoaded", async (event) => {
   addOnClick("deleteSettings", deleteSettings);
   addOnClick("resetSettings", resetSettings);
   addOnClick("regenerateBridgeId", regenerateBridgeId);
+  addOnChange("controlLive", toggleLive);
+  addOnChange("controlRecording", toggleRecording);
+  addOnChange("controlMuted", toggleMuted);
   addOnChange("controlDebugLogging", toggleDebugLogging);
   const urlParams = new URLSearchParams(window.location.search);
   loadStreamerName(urlParams);
