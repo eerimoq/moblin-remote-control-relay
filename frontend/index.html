@@ -5,215 +5,180 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moblin Remote Control Relay Bridge</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="css/vanilla-framework-version-4.14.0.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/custom.css" />
   </head>
 
-  <body class="is-dark" style="background: #001c0b">
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8" style="margin: auto">
-        <h1>Moblin Remote Control Relay Bridge</h1>
-      </div>
-      <div class="col-2"></div>
+  <body class="bg-[#001c0b] text-white min-h-screen pb-8">
+    <div class="max-w-3xl mx-auto px-4">
+      <h1 class="text-2xl font-bold py-6">Moblin Remote Control Relay Bridge</h1>
     </div>
 
-    <div class="row" style="padding-bottom: 20px">
-      <div class="col-12" style="margin: auto">
-        <span id="relayStatus" style="padding-right: 10px"></span>
+    <div class="max-w-3xl mx-auto px-4 pb-5">
+      <span id="relayStatus" class="pr-2"></span>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <p class="text-center">
+          ⚠️ DO NOT LEAVE THIS PAGE WHEN USING THE REMOTE CONTROL ⚠️
+        </p>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <p class="u-align-text--center">
-            ⚠️ DO NOT LEAVE THIS PAGE WHEN USING THE REMOTE CONTROL ⚠️
-          </p>
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Streamers</h2>
+        <div class="overflow-x-auto">
+          <table id="connections" class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-gray-700">
+                <th class="py-2 pr-6 text-gray-400 font-medium">Status</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Status changed</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Bitrate to streamer</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Bitrate to assistant</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
+        <div id="help"></div>
       </div>
-      <div class="col-2"></div>
     </div>
 
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>Streamers</h2>
-          <div>
-            <table id="connections" style="table-layout: auto">
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Status changed</th>
-                  <th>Bitrate to streamer</th>
-                  <th>Bitrate to assistant</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div id="help"></div>
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Remote controller setup</h2>
+        <h3 class="text-lg font-medium mb-2">Moblin streamer</h3>
+        <label for="streamerAssistantUrl" class="block text-sm text-gray-300 mb-1">Assistant URL</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            type="password"
+            name="streamerAssistantUrl"
+            id="streamerAssistantUrl"
+            readonly
+            class="flex-1 bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 min-w-0"
+          />
+          <button
+            aria-live="polite"
+            aria-controls="streamerAssistantUrl"
+            id="toggleShowMoblinStreamerAssistantUrl"
+            class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
+          >
+            <i id="streamerAssistantUrlIcon" class="p-icon--show"></i>
+          </button>
+          <button id="copyStreamerUrlToClipboard" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Copy</button>
         </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>Remote controller setup</h2>
-          <h3>Moblin streamer</h3>
-          <label for="streamerAssistantUrl">Assistant URL</label>
-          <div style="display: flex">
-            <input
-              type="password"
-              name="streamerAssistantUrl"
-              id="streamerAssistantUrl"
-              readonly
-            />
-            <button
-              class="p-button--base u-no-margin--right"
-              aria-live="polite"
-              aria-controls="streamerAssistantUrl"
-              id="toggleShowMoblinStreamerAssistantUrl"
-            >
-              <i id="streamerAssistantUrlIcon" class="p-icon--show"></i>
-            </button>
-            <button id="copyStreamerUrlToClipboard">Copy</button>
-          </div>
-          <div>
-            Paste it in Settings → Remote control → Streamer → Assistant URL.
-          </div>
-          <h3>Moblin assistant</h3>
-          <label for="assistantServerPort">Server port</label>
-          <div style="display: flex">
-            <input
-              type="text"
-              name="assistantServerPort"
-              id="assistantServerPort"
-              readonly
-            />
-            <div style="padding-left: 15px"></div>
-            <button id="copyAssistantPortToClipboard">Copy</button>
-          </div>
-          <div style="padding-bottom: 20px">
-            Paste it in Settings → Remote control → Assistant -> Server port.
-          </div>
-          <div class="p-notification--caution is-inline">
-            <div class="p-notification__content">
-              <p class="p-notification__message">
-                Handle your remote controller configuration same as a password:
-                never share it and don't show it on your stream.
-              </p>
-            </div>
-          </div>
+        <div class="text-sm text-gray-400 mb-6">
+          Paste it in Settings → Remote control → Streamer → Assistant URL.
         </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>Settings</h2>
-          <p>Moblin remote control assistant server port</p>
-          <input type="text" name="assistantPort" id="assistantPort" />
-          <div class="p-form-password-toggle">
-            <label for="bridgeId">Bridge id</label>
-            <button
-              class="p-button--base u-no-margin--bottom has-icon"
-              aria-live="polite"
-              aria-controls="bridgeId"
-              id="toggleShowBridgeId"
-            >
-              <span id="bridgeIdText" class="p-form-password-toggle__label">
-                Show
-              </span>
-              <i id="bridgeIdIcon" class="p-icon--show"></i>
-            </button>
-          </div>
-          <input type="password" name="bridgeId" id="bridgeId" />
-          <button class="p-button--positive" id="saveSettings">Save</button>
+        <h3 class="text-lg font-medium mb-2">Moblin assistant</h3>
+        <label for="assistantServerPort" class="block text-sm text-gray-300 mb-1">Server port</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            type="text"
+            name="assistantServerPort"
+            id="assistantServerPort"
+            readonly
+            class="flex-1 bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 min-w-0"
+          />
+          <button id="copyAssistantPortToClipboard" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Copy</button>
         </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>Status page</h2>
-          <label for="statusPageUrl">URL</label>
-          <div style="display: flex">
-            <input
-              type="password"
-              name="statusPageUrl"
-              id="statusPageUrl"
-              readonly
-            />
-            <button
-              class="p-button--base u-no-margin--right"
-              aria-live="polite"
-              aria-controls="statusPageUrl"
-              id="toggleShowStatusPageUrl"
-            >
-              <i id="statusPageUrlIcon" class="p-icon--show"></i>
-            </button>
-            <button id="copyStatusPageUrlToClipboard">Copy</button>
-          </div>
-          Open it on any device.
-          <div class="p-notification--caution is-inline">
-            <div class="p-notification__content">
-              <p class="p-notification__message">
-                Handle your status page URL same as a password: never share it
-                and don't show it on your stream.
-              </p>
-            </div>
-          </div>
+        <div class="text-sm text-gray-400 mb-4">
+          Paste it in Settings → Remote control → Assistant → Server port.
         </div>
-      </div>
-      <div class="col-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>About</h2>
+        <div class="bg-yellow-900 border border-yellow-600 text-yellow-200 rounded p-4">
           <p>
-            The Moblin Remote Control Relay aims to eliminate the need for port
-            forwarding, public IP address, and VPN when using the Moblin remote
-            control.
+            Handle your remote controller configuration same as a password:
+            never share it and don't show it on your stream.
           </p>
         </div>
       </div>
-      <div class="col-2"></div>
     </div>
 
-    <div class="u-align--center">
-      <button class="p-button--negative" id="resetSettings">Reset</button>
-    </div>
-
-    <div class="row" style="padding-bottom: 20px">
-      <div class="col-12" style="margin: auto">
-        <a href="assistant.html" target="_blank" style="padding: 10px">
-          Assistant
-        </a>
-        <a href="server-status.html" target="_blank" style="padding: 10px">
-          Server status
-        </a>
-        <a
-          href="https://github.com/eerimoq/moblin-remote-control-relay"
-          target="_blank"
-          style="padding: 10px"
-        >
-          Github
-        </a>
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Settings</h2>
+        <label for="assistantPort" class="block text-sm text-gray-300 mb-1">Moblin remote control assistant server port</label>
+        <input type="text" name="assistantPort" id="assistantPort" class="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 w-full mb-4" />
+        <div class="flex items-center justify-between mb-1">
+          <label for="bridgeId" class="text-sm text-gray-300">Bridge id</label>
+          <button
+            aria-live="polite"
+            aria-controls="bridgeId"
+            id="toggleShowBridgeId"
+            class="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-white text-sm px-3 py-1 rounded"
+          >
+            <span id="bridgeIdText">Show</span>
+            <i id="bridgeIdIcon" class="p-icon--show"></i>
+          </button>
+        </div>
+        <input type="password" name="bridgeId" id="bridgeId" class="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 w-full mb-4" />
+        <button class="bg-green-700 hover:bg-green-600 text-white font-medium px-4 py-2 rounded" id="saveSettings">Save</button>
       </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Status page</h2>
+        <label for="statusPageUrl" class="block text-sm text-gray-300 mb-1">URL</label>
+        <div class="flex gap-2 mb-2">
+          <input
+            type="password"
+            name="statusPageUrl"
+            id="statusPageUrl"
+            readonly
+            class="flex-1 bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 min-w-0"
+          />
+          <button
+            aria-live="polite"
+            aria-controls="statusPageUrl"
+            id="toggleShowStatusPageUrl"
+            class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded"
+          >
+            <i id="statusPageUrlIcon" class="p-icon--show"></i>
+          </button>
+          <button id="copyStatusPageUrlToClipboard" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">Copy</button>
+        </div>
+        <div class="text-sm text-gray-400 mb-4">Open it on any device.</div>
+        <div class="bg-yellow-900 border border-yellow-600 text-yellow-200 rounded p-4">
+          <p>
+            Handle your status page URL same as a password: never share it
+            and don't show it on your stream.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">About</h2>
+        <p class="text-gray-300">
+          The Moblin Remote Control Relay aims to eliminate the need for port
+          forwarding, public IP address, and VPN when using the Moblin remote
+          control.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex justify-center mb-6">
+      <button class="bg-red-700 hover:bg-red-600 text-white font-medium px-4 py-2 rounded" id="resetSettings">Reset</button>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-4 pb-5 text-center">
+      <a href="assistant.html" target="_blank" class="text-green-400 hover:text-green-300 px-3">
+        Assistant
+      </a>
+      <a href="server-status.html" target="_blank" class="text-green-400 hover:text-green-300 px-3">
+        Server status
+      </a>
+      <a
+        href="https://github.com/eerimoq/moblin-remote-control-relay"
+        target="_blank"
+        class="text-green-400 hover:text-green-300 px-3"
+      >
+        Github
+      </a>
     </div>
 
     <script src="js/index.mjs" type="module"></script>

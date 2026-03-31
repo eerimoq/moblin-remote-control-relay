@@ -1,0 +1,71 @@
+/* Icon styles — replacing Vanilla Framework icon classes used in JS-generated HTML */
+
+.p-icon--spinner {
+  display: inline-block;
+  width: 0.875em;
+  height: 0.875em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.u-animation--spin {
+  animation: icon-spin 0.8s linear infinite;
+}
+
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.p-icon--success::before {
+  content: "✓";
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.p-icon--error::before {
+  content: "✗";
+  color: #f87171;
+  font-weight: bold;
+}
+
+.p-icon--show::before {
+  content: "👁";
+}
+
+.p-icon--hide::before {
+  content: "🙈";
+}
+
+/* Toggle switch track — used in assistant.html controls */
+.toggle-track {
+  width: 2.75rem;
+  height: 1.5rem;
+  background-color: #4b5563;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.toggle-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background: white;
+  border-radius: 9999px;
+  height: 1.25rem;
+  width: 1.25rem;
+  transition: transform 0.15s ease-in-out;
+}
+
+input:checked + .toggle-track {
+  background-color: #16a34a;
+}
+
+input:checked + .toggle-track::after {
+  transform: translateX(1.25rem);
+}

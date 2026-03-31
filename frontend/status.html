@@ -5,54 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moblin Remote Control Relay Status</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="stylesheet" href="css/vanilla-framework-version-4.14.0.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/custom.css" />
   </head>
 
-  <body class="is-dark" style="background: #001c0b">
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8" style="margin: auto">
-        <h1>Moblin Remote Control Relay Status</h1>
-      </div>
-      <div class="col-2"></div>
+  <body class="bg-[#001c0b] text-white min-h-screen pb-8">
+    <div class="max-w-3xl mx-auto px-4">
+      <h1 class="text-2xl font-bold py-6">Moblin Remote Control Relay Status</h1>
     </div>
 
-    <div class="row">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="p-card">
-          <h2>Streamers</h2>
-          <div>
-            <table id="connections" style="table-layout: auto">
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Status changed</th>
-                  <th>Bitrate to streamer</th>
-                  <th>Bitrate to assistant</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <div id="help"></div>
+    <div class="max-w-3xl mx-auto px-4 mb-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Streamers</h2>
+        <div class="overflow-x-auto">
+          <table id="connections" class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-gray-700">
+                <th class="py-2 pr-6 text-gray-400 font-medium">Status</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Status changed</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Bitrate to streamer</th>
+                <th class="py-2 pr-6 text-gray-400 font-medium">Bitrate to assistant</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
+        <div id="help"></div>
       </div>
-      <div class="col-2"></div>
     </div>
 
-    <div class="row" style="padding-bottom: 20px">
-      <div class="col-12" style="margin: auto">
-        <a href="index.html" style="padding: 10px"> Relay </a>
-        <a href="assistant.html" style="padding: 10px"> Assistant </a>
-        <a href="server-status.html" style="padding: 10px"> Server status </a>
-        <a
-          href="https://github.com/eerimoq/moblin-remote-control-relay"
-          target="_blank"
-          style="padding: 10px"
-          >Github</a
-        >
-      </div>
+    <div class="max-w-3xl mx-auto px-4 pb-5 text-center">
+      <a href="index.html" class="text-green-400 hover:text-green-300 px-3"> Relay </a>
+      <a href="assistant.html" class="text-green-400 hover:text-green-300 px-3"> Assistant </a>
+      <a href="server-status.html" class="text-green-400 hover:text-green-300 px-3"> Server status </a>
+      <a
+        href="https://github.com/eerimoq/moblin-remote-control-relay"
+        target="_blank"
+        class="text-green-400 hover:text-green-300 px-3"
+        >Github</a
+      >
     </div>
 
     <script src="js/status.mjs" type="module"></script>
